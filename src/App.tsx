@@ -358,3 +358,43 @@ const buildCircuitFromExpression = (expression: string) => {
   });
   const traverse = (astNode: ASTNode): { id: string, x: number, y: number } => {
     if (astNode.type === 'VAR') {
+         const inputNode = inputs.get(astNode.name)!;
+      return { id: inputNode.id, x: inputNode.position.x, y: inputNode.position.y };
+    }
+    if (astNode.type === 'NOT') {
+      const arg = traverse(astNode.arg);
+      const newId = getId();
+      const newX = arg.x + 200;
+      const newY = arg.y;
+      nodes.push({
+        id: newId,
+        type: 'gateNode',
+        position: { x: newX, y: newY },
+        data: { type: 'NOT', output: 0 }
+      });
+      edges.push({ id: `e_${arg.id}-${newId}`, source: arg.id, target: newId, targetHandle: 'a', animated: false, style: { strokeWidth: 4 } });
+      return { id: newId, x: newX, y: newY };
+    }
+    const left = traverse(astNode.left);
+    const right = traverse(astNode.right);
+    const newId = getId();
+    const newX = Math.max(left.x, right.x) + 200;
+    const newY = (left.y + right.y) / 2;
+    nodes.push({
+      id: newId,
+      type: 'gateNode',
+      position: { x: newX, y: newY },
+      data: { type: astNode.op, output: 0 }
+    });
+    edges.push({ id: `e_${left.id}-${newId}_a`, source: left.id, target: newId, targetHandle: 'a', animated: false, style: { strokeWidth: 4 } });
+    edges.push({ id: `e_${right.id}-${newId}_b`, source: right.id, target: newId, targetHandle: 'b', animated: false, style: { strokeWidth: 4 } });
+    return { id: newId, x: newX, y: newY };
+  };
+  const rootResult = traverse(ast);
+  const outId = getId();
+  nodes.push({
+    id: outId,
+    type: 'outputNode',
+    position: { x: rootResult.x + 200, y: rootResult.y },
+    data: { value: 0 }
+  });
