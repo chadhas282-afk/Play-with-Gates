@@ -638,3 +638,43 @@ function ClockNode({ data }: { data: { id: string; value: number; onToggle: (id:
     </div>
   );
 }
+function DFFNode({ data }: { data: { output: number, prevClk: number } }) {
+  const isHigh = data.output === 1;
+  const isHighInv = data.output === 0;
+  return (
+    <div className={cn(
+      "p-2 rounded-xl border-2 shadow-lg bg-slate-900 transition-colors flex flex-col items-center justify-center min-w-[120px] min-h-[90px] relative",
+      isHigh ? "border-neon-blue shadow-[0_0_15px_rgba(59,130,246,0.3)]" : "border-slate-700"
+    )}>
+      <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between py-4">
+         <div className="flex items-center">
+           <Handle type="target" position={Position.Left} id="d" className="w-3 h-3 bg-slate-400 border-2 border-slate-900 !relative !left-auto !transform-none" />
+           <span className="text-xs font-bold text-slate-400 ml-1">D</span>
+         </div>
+         <div className="flex items-center">
+           <Handle type="target" position={Position.Left} id="clk" className="w-3 h-3 bg-slate-400 border-2 border-slate-900 !relative !left-auto !transform-none" />
+           <div className="w-0 h-0 border-t-4 border-t-transparent border-l-6 border-l-slate-400 border-b-4 border-b-transparent ml-1" />
+         </div>
+      </div>
+      <div className="text-center">
+        <div className="text-sm font-bold tracking-widest text-slate-300">D-FF</div>
+      </div>
+      <div className="absolute right-0 top-0 bottom-0 flex flex-col justify-between py-4 items-end">
+         <div className="flex items-center">
+           <span className="text-xs font-bold text-slate-400 mr-1">Q</span>
+           <Handle type="source" position={Position.Right} id="q" className={cn("w-3 h-3 border-2 border-slate-900 !relative !right-auto !transform-none", isHigh ? "bg-neon-blue" : "bg-slate-500")} />
+         </div>
+         <div className="flex items-center">
+           <span className="text-xs font-bold text-slate-400 mr-1">Q̅</span>
+           <Handle type="source" position={Position.Right} id="qbar" className={cn("w-3 h-3 border-2 border-slate-900 !relative !right-auto !transform-none", isHighInv ? "bg-neon-blue" : "bg-slate-500")} />
+         </div>
+      </div>
+    </div>
+  );
+}
+function MacroNode({ data }: { data: { name: string, numInputs: number, numOutputs: number, outputVals: number[] } }) {
+  return (
+    <div className="p-4 rounded-xl border-2 border-neon-blue shadow-[0_0_15px_rgba(59,130,246,0.2)] bg-slate-900 text-center relative min-w-[100px] min-h-[80px] flex items-center justify-center">
+      {Array.from({ length: data.numInputs }).map((_, i) => (
+        <Handle key={`in-${i}`} type="target" position={Position.Left} id={`in-${i}`} style={{ top: `${((i + 1) / (data.numInputs + 1)) * 100}%` }} className="w-3 h-3 bg-slate-400 border-2 border-slate-900" />
+      ))}
