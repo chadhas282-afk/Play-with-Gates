@@ -1078,3 +1078,43 @@ function TutorialOverlay({ run, onFinish }: TutorialOverlayProps) {
   );
 }
 interface MultiplayerProps {
+    nodes: Node[];
+  edges: Edge[];
+  setNodes: (nds: Node[]) => void;
+  setEdges: (eds: Edge[]) => void;
+}
+function MultiplayerManager({ nodes, edges, setNodes, setEdges }: MultiplayerProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [peerId, setPeerId] = useState<string | null>(null);
+  const [joinId, setJoinId] = useState('');
+  const [connection, setConnection] = useState<DataConnection | null>(null);
+  const [copied, setCopied] = useState(false);
+  const peerRef = useRef<Peer | null>(null);
+  const isHost = useRef(false);
+  const ignoreNextUpdate = useRef(false);
+  useEffect(() => {
+    peerRef.current = new Peer();
+    peerRef.current.on('open', (id) => {
+      setPeerId(id);
+    });
+    peerRef.current.on('connection', (conn) => {
+      setupConnection(conn, true);
+    });
+    return () => {
+      peerRef.current?.destroy();
+    };
+  }, []);
+  const setupConnection = (conn: DataConnection, host: boolean) => {
+    isHost.current = host;
+    conn.on('open', () => {
+      setConnection(conn);
+      setIsOpen(false); 
+      if (host) {
+        conn.send({ type: 'sync', nodes, edges });
+      }
+    });
+    conn.on('data', (data: any) => {
+      if (data.type === 'sync') {
+        ignoreNextUpdate.current = true;
+        setNodes(data.nodes);
+        setEdges(data.edges);
