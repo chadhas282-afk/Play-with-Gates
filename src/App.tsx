@@ -1118,3 +1118,83 @@ function MultiplayerManager({ nodes, edges, setNodes, setEdges }: MultiplayerPro
         ignoreNextUpdate.current = true;
         setNodes(data.nodes);
         setEdges(data.edges);
+        }
+    });
+    conn.on('close', () => {
+      setConnection(null);
+    });
+  };
+  const handleJoin = () => {
+    if (!peerRef.current || !joinId) return;
+    const conn = peerRef.current.connect(joinId);
+    setupConnection(conn, false);
+  };
+  const copyId = () => {
+    if (peerId) {
+      navigator.clipboard.writeText(peerId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+  useEffect(() => {
+    if (ignoreNextUpdate.current) {
+      ignoreNextUpdate.current = false;
+      return;
+    }
+    if (connection && connection.open) {
+      connection.send({ type: 'sync', nodes, edges });
+    }
+  }, [nodes, edges, connection]);
+  return (
+    <>
+      <button 
+        onClick={() => setIsOpen(true)}
+        className={cn(
+          "absolute top-4 left-1/2 -translate-x-1/2 z-50 p-3 rounded-xl border-2 shadow-xl backdrop-blur-md flex items-center gap-2 font-bold transition-colors",
+          connection 
+             ? "bg-green-900/50 border-green-700 text-green-400 shadow-[0_0_15px_rgba(34,197,94,0.3)]" 
+             : "bg-slate-900/90 border-slate-700 text-slate-400 hover:text-white"
+        )}
+      >
+        <Radio className={cn("w-5 h-5", connection ? "animate-pulse" : "")} />
+        {connection ? 'Connected (P2P)' : 'Multiplayer'}
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-slate-900 border-2 border-slate-700 rounded-2xl shadow-2xl w-full max-w-md flex flex-col overflow-hidden"
+            >
+              <div className="p-4 border-b-2 border-slate-800 bg-slate-950 flex justify-between items-center">
+                <h2 className="text-xl font-bold text-slate-200 flex items-center gap-2">
+                  <Users className="text-neon-blue" /> P2P Multiplayer Room
+                </h2>
+                <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white">&times;</button>
+              </div>
+              <div className="p-6 space-y-6">
+                 {connection ? (
+                   <div className="text-center space-y-4">
+                     <div className="text-green-400 font-bold text-lg animate-pulse">Connection Active!</div>
+                     <p className="text-slate-400 text-sm">You are currently syncing circuit state in real-time with another user via WebRTC.</p>
+                     <button onClick={() => connection.close()} className="px-4 py-2 bg-red-900/50 text-red-400 rounded font-bold border border-red-800/50 w-full">Disconnect</button>
+                   </div>
+                 ) : (
+                   <>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-slate-500 uppercase">Host a Room (Your ID)</label>
+                      <div className="flex bg-slate-800 border border-slate-700 rounded overflow-hidden">
+                        <input type="text" readOnly value={peerId || 'Generating...'} className="bg-transparent p-2 text-slate-300 font-mono text-sm flex-1 outline-none" />
+                        <button onClick={copyId} className="px-4 bg-slate-700 text-slate-300 hover:text-white transition-colors flex items-center gap-2">
+                          {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+                        </button>
+                      </div>
+                      <p className="text-xs text-slate-500">Send this ID to a friend to let them join your circuit.</p>
+                    </div>
+                    <div className="relative flex py-4 items-center">
+                        <div className="flex-grow border-t border-slate-700"></div>
+                        <span className="flex-shrink-0 mx-4 text-slate-500 text-xs font-bold uppercase">OR</span>
+                        <div className="flex-grow border-t border-slate-700"></div>
+                    </div>
