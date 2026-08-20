@@ -198,3 +198,43 @@ const simulateCircuit = (nodes: Node[], edges: Edge[], inputValues: number[]): n
 const simulateCircuitMulti = (nodes: Node[], edges: Edge[], inputValues: number[]): number[] => {
   let currentNodes = JSON.parse(JSON.stringify(nodes));
   const inputNodes = currentNodes.filter((n: any) => n.type === 'inputNode').sort((a: any, b: any) => a.position.y - b.position.y);
+  inputNodes.forEach((n: any, idx: number) => {
+     n.data.value = inputValues[idx] ?? 0;
+     n.data.output = inputValues[idx] ?? 0;
+  });
+  let settling = true;
+  let iterations = 0;
+  while (settling && iterations < 50) {
+    settling = false;
+    iterations++;
+    currentNodes = currentNodes.map((node: any) => {
+      if (node.type === 'inputNode') return node;
+      const incomingEdges = edges.filter((e: any) => e.target === node.id);
+      if (node.type === 'gateNode') {
+        const valAEdge = incomingEdges.find((e: any) => e.targetHandle === 'a');
+        const valBEdge = incomingEdges.find((e: any) => e.targetHandle === 'b');
+        const sourceANode = currentNodes.find((n: any) => n.id === valAEdge?.source);
+        const sourceBNode = currentNodes.find((n: any) => n.id === valBEdge?.source);
+        const valA = sourceANode ? (sourceANode.data.output ?? sourceANode.data.value ?? 0) : 0;
+        const valB = sourceBNode ? (sourceBNode.data.output ?? sourceBNode.data.value ?? 0) : 0;
+        const newOutput = evaluateGate(node.data.type, [valA, valB]);
+        if (newOutput !== node.data.output) {
+          settling = true;
+          return { ...node, data: { ...node.data, output: newOutput } };
+        }
+      }
+      if (node.type === 'outputNode') {
+        const valEdge = incomingEdges[0];
+        const sourceNode = currentNodes.find((n: any) => n.id === valEdge?.source);
+        const val = sourceNode ? (sourceNode.data.output ?? sourceNode.data.value ?? 0) : 0;
+        if (val !== node.data.value) {
+          settling = true;
+          return { ...node, data: { ...node.data, value: val } };
+        }
+      }
+      return node;
+    });
+  }
+  const outputNodes = currentNodes.filter((n: any) => n.type === 'outputNode').sort((a: any, b: any) => a.position.y - b.position.y);
+  return outputNodes.map((n: any) => n.data.value ?? 0);
+};
