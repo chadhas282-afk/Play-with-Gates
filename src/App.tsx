@@ -998,3 +998,43 @@ function SynthNode({ data }: { data: { value: number; freq?: number }, id: strin
         </button>
       </div>
       <div className={cn(
+        "w-12 h-12 rounded-full border-4 flex items-center justify-center transition-all duration-100",
+        isHigh && !isMuted ? "border-purple-500 bg-purple-500/20 scale-110" : "border-slate-700 bg-slate-800"
+      )}>
+        {isHigh && !isMuted && (
+           <motion.div
+             animate={{ scale: [1, 1.2, 1] }}
+             transition={{ repeat: Infinity, duration: 0.2 }}
+             className="w-4 h-4 rounded-full bg-purple-400"
+           />
+        )}
+      </div>
+      <div className="text-[10px] font-mono text-slate-500">{freq} Hz</div>
+    </div>
+  );
+}
+const Joyride = (JoyrideModule as any).default || (JoyrideModule as any).Joyride || JoyrideModule;
+interface TutorialOverlayProps {
+  run: boolean;
+  onFinish: () => void;
+}
+function TutorialOverlay({ run, onFinish }: TutorialOverlayProps) {
+  const steps: Step[] = [
+    {
+      target: 'body',
+      content: 'Welcome to Play with Gates! Let\'s take a quick tour of your new digital logic sandbox.',
+      placement: 'center',
+    },
+    {
+      target: '#tour-sidebar',
+      content: 'Here you can drag and drop Inputs, Logic Gates, Master Clocks, Multi-Bit Buses, and even fully programmable ICs onto the canvas!',
+      placement: 'right',
+    },
+    {
+      target: '#tour-clock-panel',
+      content: 'The Master Clock panel controls time in the simulation. Play, pause, or step through logic ticks, and adjust the frequency up to 20Hz.',
+      placement: 'bottom',
+    },
+    {
+      target: '#tour-actions',
+      content: 'The Canvas Actions panel provides powerful tools like Auto-Tidy (Dagre layout) and Truth Table analysis.',
