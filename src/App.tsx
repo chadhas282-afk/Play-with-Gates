@@ -1038,3 +1038,43 @@ function TutorialOverlay({ run, onFinish }: TutorialOverlayProps) {
     {
       target: '#tour-actions',
       content: 'The Canvas Actions panel provides powerful tools like Auto-Tidy (Dagre layout) and Truth Table analysis.',
+      placement: 'left',
+    },
+    {
+      target: '#tour-multiplayer',
+      content: 'Click here to generate a P2P Serverless Room ID, and invite your friends to collaborate on your circuit in real-time!',
+      placement: 'left',
+    },
+    {
+      target: '#tour-record',
+      content: 'Finished your masterpiece? Click Record to capture the canvas as a WebM video and share it online!',
+      placement: 'left',
+    }
+  ];
+  return (
+    <Joyride
+      steps={steps}
+      run={run}
+      continuous={true}
+      showSkipButton={true}
+      showProgress={true}
+      styles={{
+        options: {
+          primaryColor: '#3b82f6', 
+          backgroundColor: '#0f172a', 
+          textColor: '#f1f5f9', 
+          arrowColor: '#0f172a',
+          overlayColor: 'rgba(0, 0, 0, 0.7)',
+        },
+        buttonClose: { display: 'none' },
+        tooltip: { border: '2px solid #334155', borderRadius: '12px' }
+      }}
+      callback={(data) => {
+        if (data.status === 'finished' || data.status === 'skipped') {
+          onFinish();
+        }
+      }}
+    />
+  );
+}
+interface MultiplayerProps {
