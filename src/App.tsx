@@ -798,3 +798,43 @@ function MemoryNode({ data }: { data: { addr?: number, dataIn?: number, we?: num
       <span className="text-[10px] font-bold text-emerald-400 tracking-widest mt-1 ml-4">16B RAM</span>
       <div className="flex flex-col items-center mt-4 bg-slate-800 p-2 rounded w-[80%] ml-4 border-2 border-slate-700">
          <span className="text-[10px] text-slate-400">0x{addr.toString(16).toUpperCase()}</span>
+         <span className="text-xs font-mono font-bold text-emerald-400 mt-1">{(data.dataOut || 0).toString(16).toUpperCase().padStart(2, '0')}</span>
+      </div>
+    </div>
+  );
+}
+function CodeNode({ id, data }: { id: string, data: { code?: string, output?: number, error?: string } }) {
+  const code = data.code || 'return (A & B) | C;';
+  const { setNodes } = useReactFlow();
+  const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newCode = e.target.value;
+    setNodes(nds => nds.map(n => n.id === id ? { ...n, data: { ...n.data, code: newCode } } : n));
+  };
+  return (
+    <div className="p-3 rounded-lg border-2 border-fuchsia-500 bg-slate-900 shadow-xl flex flex-col min-w-[200px] min-h-[160px] relative">
+      <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-around h-full">
+         <div className="relative"><span className="absolute left-3 text-[8px] text-slate-400 top-1/2 -translate-y-1/2">A</span><Handle type="target" position={Position.Left} id="in-a" style={{ top: '20%' }} className="w-2 h-2 bg-slate-400 border border-slate-900" /></div>
+         <div className="relative"><span className="absolute left-3 text-[8px] text-slate-400 top-1/2 -translate-y-1/2">B</span><Handle type="target" position={Position.Left} id="in-b" style={{ top: '40%' }} className="w-2 h-2 bg-slate-400 border border-slate-900" /></div>
+         <div className="relative"><span className="absolute left-3 text-[8px] text-slate-400 top-1/2 -translate-y-1/2">C</span><Handle type="target" position={Position.Left} id="in-c" style={{ top: '60%' }} className="w-2 h-2 bg-slate-400 border border-slate-900" /></div>
+         <div className="relative"><span className="absolute left-3 text-[8px] text-slate-400 top-1/2 -translate-y-1/2">D</span><Handle type="target" position={Position.Left} id="in-d" style={{ top: '80%' }} className="w-2 h-2 bg-slate-400 border border-slate-900" /></div>
+      </div>
+      <div className="absolute right-0 top-0 bottom-0 flex flex-col justify-center h-full">
+         <div className="relative"><span className="absolute right-4 text-[8px] text-slate-400 top-1/2 -translate-y-1/2">OUT</span><Handle type="source" position={Position.Right} id="out" style={{ top: '50%' }} className="w-3 h-3 bg-fuchsia-400 border-2 border-slate-900" /></div>
+      </div>
+      <div className="flex justify-between items-center ml-4 mr-6">
+        <span className="text-[10px] font-bold text-fuchsia-400 tracking-widest">CUSTOM SCRIPT</span>
+        <span className={cn("text-xs font-mono font-bold px-1 rounded", data.error ? "bg-red-900/50 text-red-400" : "bg-slate-800 text-fuchsia-400")}>
+           {data.error ? 'ERR' : (data.output || 0)}
+        </span>
+      </div>
+      <textarea 
+         className={cn(
+            "mt-2 ml-4 mr-6 flex-1 bg-slate-950 border rounded p-1 text-xs font-mono text-slate-300 outline-none resize-none custom-scrollbar focus:border-fuchsia-500",
+            data.error ? "border-red-500/50" : "border-slate-700"
+         )}
+         value={code}
+         onChange={handleCodeChange}
+         spellCheck={false}
+      />
+    </div>
+  );
