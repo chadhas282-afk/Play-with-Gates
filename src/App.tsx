@@ -318,3 +318,43 @@ class Parser {
     return node;
   }
   public expr(): ASTNode {
+    let node = this.term();
+    while (this.currentToken.type === 'OR' || this.currentToken.type === 'XOR') {
+      const op = this.currentToken.type;
+      this.eat(op);
+      node = { type: 'OP', op: op as 'OR'|'XOR', left: this.term(), right: node };
+    }
+    return node;
+  }
+}
+const buildCircuitFromExpression = (expression: string) => {
+  const lexer = new Lexer(expression);
+  const parser = new Parser(lexer);
+  const ast = parser.expr();
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+  let nodeId = 0;
+  const getId = () => `auto_${nodeId++}`;
+  const inputs = new Map<string, Node>();
+  const findVars = (node: ASTNode, vars: Set<string>) => {
+    if (node.type === 'VAR') vars.add(node.name);
+    else if (node.type === 'NOT') findVars(node.arg, vars);
+    else { findVars(node.left, vars); findVars(node.right, vars); }
+  };
+  const uniqueVars = new Set<string>();
+  findVars(ast, uniqueVars);
+  let yPos = 100;
+  Array.from(uniqueVars).sort().forEach(v => {
+    const node: Node = {
+      id: getId(),
+      type: 'inputNode',
+      position: { x: 100, y: yPos },
+      data: { id: '', value: 0 },
+    };
+    node.data.id = node.id;
+    inputs.set(v, node);
+    nodes.push(node);
+    yPos += 150;
+  });
+  const traverse = (astNode: ASTNode): { id: string, x: number, y: number } => {
+    if (astNode.type === 'VAR') {
