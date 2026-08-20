@@ -718,3 +718,43 @@ function BusMergerNode({ data }: { data: { inputVals?: number[], busValue?: numb
 function BusSplitterNode({ data }: { data: { busValue?: number } }) {
   const busValue = data.busValue || 0;
   return (
+     <div className="p-2 rounded-lg border-2 border-indigo-500 bg-slate-900 shadow-xl flex items-center justify-between w-24">
+      <Handle 
+        type="target" 
+        position={Position.Left} 
+        id="bus-in"
+        className="w-4 h-4 bg-indigo-500 border-2 border-slate-900 rounded-none" 
+      />
+      <div className="flex flex-col items-center justify-center">
+         <span className="text-[10px] font-bold text-indigo-400 tracking-tighter">SPLIT</span>
+         <span className="text-xs font-mono font-bold text-white bg-slate-800 px-1 rounded">{busValue.toString(16).toUpperCase()}</span>
+      </div>
+      <div className="flex flex-col justify-around h-[80px]">
+        {[0, 1, 2, 3].map(i => (
+          <Handle 
+            key={`out-${i}`} 
+            type="source" 
+            position={Position.Right} 
+            id={`out-${i}`} 
+            style={{ top: `${(i + 1) * 20}%` }} 
+            className="w-2 h-2 bg-slate-400 border border-slate-900" 
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+function ALUNode({ data }: { data: { busA?: number, busB?: number, op0?: number, op1?: number, out?: number, carry?: number } }) {
+  const op0 = data.op0 || 0;
+  const op1 = data.op1 || 0;
+  const opCode = (op1 << 1) | op0;
+  const getOpName = () => {
+    switch(opCode) {
+      case 0: return 'ADD';
+      case 1: return 'SUB';
+      case 2: return 'AND';
+      case 3: return 'OR';
+      default: return 'NOP';
+    }
+  };
+  return (
