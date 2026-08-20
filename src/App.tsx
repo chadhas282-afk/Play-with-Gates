@@ -398,3 +398,43 @@ const buildCircuitFromExpression = (expression: string) => {
     position: { x: rootResult.x + 200, y: rootResult.y },
     data: { value: 0 }
   });
+  edges.push({ id: `e_${rootResult.id}-${outId}`, source: rootResult.id, target: outId, animated: false, style: { strokeWidth: 4 } });
+  return { nodes, edges };
+};
+function GlowingEdge({
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  style = {},
+  markerEnd,
+  animated
+}: EdgeProps) {
+  const [edgePath] = getBezierPath({
+    sourceX,
+    sourceY,
+    sourcePosition,
+    targetX,
+    targetY,
+    targetPosition,
+  });
+  return (
+    <>
+      <BaseEdge path={edgePath} markerEnd={markerEnd} style={{ ...style, strokeDasharray: animated ? '5,5' : 'none' }} />
+      {animated && (
+        <>
+          <circle r="6" fill="#4ade80" filter="drop-shadow(0 0 8px #22c55e)">
+            <animateMotion dur="0.8s" repeatCount="indefinite" path={edgePath} />
+          </circle>
+          <circle r="3" fill="#ffffff">
+            <animateMotion dur="0.8s" repeatCount="indefinite" path={edgePath} />
+          </circle>
+        </>
+      )}
+    </>
+  );
+}
+function BusEdge({
+  sourceX,
