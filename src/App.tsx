@@ -918,3 +918,43 @@ function SegmentDisplayNode({ data }: { data: { inputVals?: number[] } }) {
             style={{ top: `${(i + 1) * 20}%` }} 
             className="w-3 h-3 bg-slate-400 border-2 border-slate-900" 
           />
+          ))}
+      </div>
+      <div className="relative w-16 h-24 bg-black rounded-lg p-2 border-2 border-slate-800 flex items-center justify-center">
+        <svg viewBox="0 0 57 80" className="w-full h-full">
+          <polygon points="11,6 46,6 42,10 15,10" className={segClass(activeSegments[0])} />
+          <polygon points="48,8 48,38 44,34 44,12" className={segClass(activeSegments[1])} />
+          <polygon points="48,42 48,72 44,68 44,46" className={segClass(activeSegments[2])} />
+          <polygon points="11,74 46,74 42,70 15,70" className={segClass(activeSegments[3])} />
+          <polygon points="9,42 9,72 13,68 13,46" className={segClass(activeSegments[4])} />
+          <polygon points="9,8 9,38 13,34 13,12" className={segClass(activeSegments[5])} />
+          <polygon points="11,40 15,36 42,36 46,40 42,44 15,44" className={segClass(activeSegments[6])} />
+        </svg>
+      </div>
+    </div>
+  );
+}
+let audioCtx: AudioContext | null = null;
+const getAudioContext = () => {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+  }
+  return audioCtx;
+};
+function SynthNode({ data }: { data: { value: number; freq?: number }, id: string }) {
+  const isHigh = data.value === 1;
+  const oscRef = useRef<OscillatorNode | null>(null);
+  const gainRef = useRef<GainNode | null>(null);
+  const [isMuted, setIsMuted] = useState(false);
+  const freq = data.freq || 440; 
+  useEffect(() => {
+    try {
+      const ctx = getAudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = freq;
+      gain.gain.value = 0; 
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
