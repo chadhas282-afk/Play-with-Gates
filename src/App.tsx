@@ -758,3 +758,43 @@ function ALUNode({ data }: { data: { busA?: number, busB?: number, op0?: number,
     }
   };
   return (
+     <div className="p-3 rounded-lg border-2 border-red-500 bg-slate-900 shadow-xl flex flex-col items-center justify-between min-w-[120px] min-h-[140px] relative">
+      <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-around h-full">
+         <Handle type="target" position={Position.Left} id="bus-a" style={{ top: '25%' }} className="w-4 h-4 bg-indigo-500 border-2 border-slate-900 rounded-none" />
+         <Handle type="target" position={Position.Left} id="bus-b" style={{ top: '50%' }} className="w-4 h-4 bg-indigo-500 border-2 border-slate-900 rounded-none" />
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 flex justify-center gap-4 w-full h-0">
+         <Handle type="target" position={Position.Bottom} id="op-0" style={{ left: '35%' }} className="w-2 h-2 bg-slate-400 border border-slate-900" />
+         <Handle type="target" position={Position.Bottom} id="op-1" style={{ left: '65%' }} className="w-2 h-2 bg-slate-400 border border-slate-900" />
+      </div>
+      <div className="absolute right-0 top-0 bottom-0 flex flex-col justify-around h-full">
+         <Handle type="source" position={Position.Right} id="bus-out" style={{ top: '35%' }} className="w-4 h-4 bg-indigo-500 border-2 border-slate-900 rounded-none" />
+         <Handle type="source" position={Position.Right} id="carry-out" style={{ top: '75%' }} className="w-2 h-2 bg-red-400 border border-slate-900" />
+      </div>
+      <span className="text-[10px] font-bold text-red-400 tracking-widest mt-1">4-BIT ALU</span>
+      <div className="flex flex-col items-center mt-2 bg-slate-800 p-2 rounded w-full">
+         <span className="text-[10px] text-slate-400">OP: {getOpName()}</span>
+         <span className="text-xs font-mono font-bold text-white mt-1">OUT: {(data.out || 0).toString(16).toUpperCase()}</span>
+      </div>
+      <div className="flex justify-between w-full px-2 mt-2">
+         <span className="text-[8px] text-slate-500">A/B</span>
+         <span className="text-[8px] text-slate-500">C</span>
+      </div>
+    </div>
+  );
+}
+function MemoryNode({ data }: { data: { addr?: number, dataIn?: number, we?: number, dataOut?: number } }) {
+  const addr = data.addr || 0;
+  return (
+    <div className="p-3 rounded-lg border-2 border-emerald-500 bg-slate-900 shadow-xl flex flex-col items-center justify-between min-w-[140px] min-h-[160px] relative">
+      <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-around h-full">
+         <div className="relative"><span className="absolute left-5 text-[8px] text-slate-400 top-1/2 -translate-y-1/2">ADDR</span><Handle type="target" position={Position.Left} id="bus-addr" style={{ top: '25%' }} className="w-4 h-4 bg-indigo-500 border-2 border-slate-900 rounded-none" /></div>
+         <div className="relative"><span className="absolute left-5 text-[8px] text-slate-400 top-1/2 -translate-y-1/2">DATA IN</span><Handle type="target" position={Position.Left} id="bus-data" style={{ top: '50%' }} className="w-4 h-4 bg-indigo-500 border-2 border-slate-900 rounded-none" /></div>
+         <div className="relative"><span className="absolute left-5 text-[8px] text-slate-400 top-1/2 -translate-y-1/2">WE</span><Handle type="target" position={Position.Left} id="we" style={{ top: '80%' }} className="w-2 h-2 bg-emerald-400 border border-slate-900" /></div>
+      </div>
+      <div className="absolute right-0 top-0 bottom-0 flex flex-col justify-center h-full">
+         <div className="relative"><span className="absolute right-5 text-[8px] text-slate-400 top-1/2 -translate-y-1/2">DATA OUT</span><Handle type="source" position={Position.Right} id="bus-out" style={{ top: '50%' }} className="w-4 h-4 bg-indigo-500 border-2 border-slate-900 rounded-none" /></div>
+      </div>
+      <span className="text-[10px] font-bold text-emerald-400 tracking-widest mt-1 ml-4">16B RAM</span>
+      <div className="flex flex-col items-center mt-4 bg-slate-800 p-2 rounded w-[80%] ml-4 border-2 border-slate-700">
+         <span className="text-[10px] text-slate-400">0x{addr.toString(16).toUpperCase()}</span>
