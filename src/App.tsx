@@ -598,3 +598,43 @@ function DelayNode({ data, id }: { data: { value: number; inVal?: number }, id: 
         "w-6 h-6 flex items-center justify-center rounded font-bold text-sm transition-colors",
         isHigh ? "bg-yellow-400 text-black" : "bg-slate-700 text-slate-300"
       )}>
+        {data.value ?? 0}
+      </div>
+      <Handle 
+        type="source" 
+        position={Position.Right} 
+        className={cn("w-3 h-3 border-2 border-slate-900", isHigh ? "bg-yellow-400" : "bg-slate-500")}
+      />
+    </div>
+  );
+}
+function ClockNode({ data }: { data: { id: string; value: number; onToggle: (id: string, val: number) => void } }) {
+  const isHigh = data.value === 1;
+  const isHighRef = useRef(isHigh);
+  isHighRef.current = isHigh;
+  useEffect(() => {
+    return globalClock.subscribe(() => {
+      data.onToggle(data.id, isHighRef.current ? 0 : 1);
+    });
+  }, [data.id, data.onToggle]);
+  return (
+    <div className={cn(
+      "px-4 py-2 rounded-lg border-2 shadow-lg bg-slate-900 transition-colors flex items-center gap-3",
+      isHigh ? "border-neon-blue shadow-[0_0_15px_rgba(59,130,246,0.3)]" : "border-slate-700"
+    )}>
+      <Timer className={cn("w-4 h-4", isHigh ? "text-neon-blue" : "text-slate-500")} />
+      <span className="text-sm font-bold tracking-wider text-slate-400">CLK</span>
+      <div className={cn(
+        "w-8 h-8 flex items-center justify-center rounded font-bold text-lg transition-colors",
+        isHigh ? "bg-neon-blue text-black" : "bg-slate-700 text-slate-300"
+      )}>
+        {data.value ?? 0}
+      </div>
+      <Handle 
+        type="source" 
+        position={Position.Right} 
+        className={cn("w-3 h-3 border-2 border-slate-900", isHigh ? "bg-neon-blue" : "bg-slate-500")}
+      />
+    </div>
+  );
+}
