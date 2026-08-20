@@ -238,3 +238,43 @@ const simulateCircuitMulti = (nodes: Node[], edges: Edge[], inputValues: number[
   const outputNodes = currentNodes.filter((n: any) => n.type === 'outputNode').sort((a: any, b: any) => a.position.y - b.position.y);
   return outputNodes.map((n: any) => n.data.value ?? 0);
 };
+type TokenType = 'VAR' | 'AND' | 'OR' | 'XOR' | 'NOT' | 'LPAREN' | 'RPAREN' | 'EOF';
+interface Token {
+  type: TokenType;
+  value: string;
+}
+class Lexer {
+  private pos = 0;
+  private input: string;
+  constructor(input: string) { this.input = input; }
+  getNextToken(): Token {
+    while (this.pos < this.input.length) {
+      const char = this.input[this.pos];
+      if (/\s/.test(char)) {
+        this.pos++;
+        continue;
+      }
+      if (/[a-zA-Z]/.test(char)) {
+        let value = '';
+        while (this.pos < this.input.length && /[a-zA-Z0-9_]/.test(this.input[this.pos])) {
+          value += this.input[this.pos];
+          this.pos++;
+        }
+        return { type: 'VAR', value };
+      }
+      if (char === '*' || char === '&') { this.pos++; return { type: 'AND', value: char }; }
+      if (char === '+' || char === '|') { this.pos++; return { type: 'OR', value: char }; }
+      if (char === '^') { this.pos++; return { type: 'XOR', value: char }; }
+      if (char === '!' || char === '~') { this.pos++; return { type: 'NOT', value: char }; }
+      if (char === '(') { this.pos++; return { type: 'LPAREN', value: char }; }
+      if (char === ')') { this.pos++; return { type: 'RPAREN', value: char }; }
+      throw new Error(`Unexpected character: ${char}`);
+    }
+    return { type: 'EOF', value: '' };
+  }
+}
+export const GATE_TYPES = ['AND', 'OR', 'NOT', 'NAND', 'NOR', 'XOR', 'XNOR', 'MUX'] as const;
+export type GateType = typeof GATE_TYPES[number];
+type ASTNode = 
+  | { type: 'VAR', name: string }
+  | { type: 'NOT', arg: ASTNode }
