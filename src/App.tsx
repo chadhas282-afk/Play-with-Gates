@@ -557,4 +557,44 @@ function GateNode({ data }: { data: { type: GateType; output: number } }) {
           <Handle type="target" position={Position.Bottom} id="sel" style={{ left: '50%' }} className="w-3 h-3 bg-neon-blue border-2 border-slate-900" />
         </>
       ) : expectedInputs === 2 ? (
-        <></>
+        <>
+        <Handle type="target" position={Position.Left} id="a" style={{ top: '35%' }} className="w-3 h-3 bg-slate-400 border-2 border-slate-900" />
+          <Handle type="target" position={Position.Left} id="b" style={{ top: '65%' }} className="w-3 h-3 bg-slate-400 border-2 border-slate-900" />
+        </>
+      ) : (
+        <Handle type="target" position={Position.Left} id="a" className="w-3 h-3 bg-slate-400 border-2 border-slate-900" />
+      )}
+      <div className="scale-75 origin-center pointer-events-none flex items-center justify-center w-full h-full -m-4">
+         <GateVisualizer type={data.type} output={data.output} />
+      </div>
+      <Handle 
+        type="source" 
+        position={Position.Right} 
+        className={cn("w-3 h-3 border-2 border-slate-900", isHigh ? "bg-neon-green" : "bg-slate-500")}
+      />
+    </div>
+  );
+}
+function DelayNode({ data, id }: { data: { value: number; inVal?: number }, id: string }) {
+  const isHigh = data.value === 1;
+  const inVal = data.inVal ?? 0;
+  const inValRef = useRef(inVal);
+  inValRef.current = inVal;
+  const { setNodes } = useReactFlow();
+  useEffect(() => {
+    return globalClock.subscribe(() => {
+      setNodes(nds => nds.map(n => n.id === id ? { ...n, data: { ...n.data, value: inValRef.current } } : n));
+    });
+  }, [id, setNodes]);
+  return (
+    <div className={cn(
+      "px-4 py-2 rounded-lg border-2 shadow-lg bg-slate-900 transition-colors flex items-center gap-3",
+      isHigh ? "border-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.3)]" : "border-slate-700"
+    )}>
+      <Handle type="target" position={Position.Left} className="w-3 h-3 bg-slate-400 border-2 border-slate-900" />
+      <Clock className={cn("w-4 h-4", isHigh ? "text-yellow-400" : "text-slate-500")} />
+      <span className="text-xs font-bold tracking-wider text-slate-400">DELAY</span>
+      <div className={cn(
+        "w-6 h-6 flex items-center justify-center rounded font-bold text-sm transition-colors",
+        isHigh ? "bg-yellow-400 text-black" : "bg-slate-700 text-slate-300"
+      )}>
