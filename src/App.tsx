@@ -478,3 +478,44 @@ function BusEdge({
     </>
   );
 }
+function InputNode({ data, id }: { data: { value: number; onToggle?: (id: string) => void }, id: string }) {
+  const isHigh = data.value === 1;
+  const { setNodes, updateNodeData } = useReactFlow();
+  const handleToggle = () => {
+    const newVal = data.value === 0 ? 1 : 0;
+    updateNodeData(id, { value: newVal });
+    if (data.onToggle) {
+      data.onToggle(id);
+    } else {
+      setNodes((nds: any) => nds.map((n: any) => 
+        n.id === id ? { ...n, data: { ...n.data, value: newVal } } : n
+      ));
+    }
+  };
+  return (
+    <div className={cn(
+      "px-4 py-2 rounded-lg border-2 shadow-lg transition-colors flex flex-col items-center gap-2",
+      isHigh ? "border-neon-blue bg-slate-900 shadow-[0_0_25px_rgba(59,130,246,0.4)]" : "border-slate-700 bg-slate-900"
+    )}>
+      <span className="text-sm font-bold tracking-wider text-slate-400">IN</span>
+      <button
+        type="button"
+        onClick={handleToggle}
+        className={cn(
+          "nodrag w-10 h-10 rounded-full flex items-center justify-center text-xl font-bold transition-all duration-300",
+          isHigh ? "bg-neon-blue text-white" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+        )}
+      >
+        {data.value ?? 0}
+      </button>
+      <Handle type="source" position={Position.Right} className="w-3 h-3 bg-slate-400 border-2 border-slate-900" />
+    </div>
+  );
+}
+function OutputNode({ data }: { data: { value: number } }) {
+  const isHigh = data.value === 1;
+  return (
+    <div className={cn(
+      "px-5 py-3 rounded-xl border-2 shadow-xl transition-colors flex flex-col items-center gap-3",
+      isHigh ? "border-neon-green bg-slate-900 shadow-[0_0_25px_rgba(34,197,94,0.4)]" : "border-slate-700 bg-slate-900"
+    )}></div>
