@@ -118,3 +118,43 @@ const exportToVerilog = (nodes: Node[], edges: Edge[], moduleName = 'CustomCircu
    gates.forEach(g => {
       const wA = getSourceWire(g.id, 'a');
       const wB = getSourceWire(g.id, 'b');
+      const wSel = getSourceWire(g.id, 'sel');
+      const wOut = `wire_${getSafeId(g.id)}`;
+      let expr = '';
+      switch (g.data.type) {
+         case 'AND': expr = `${wA} & ${wB}`; break;
+         case 'OR': expr = `${wA} | ${wB}`; break;
+         case 'NOT': expr = `~${wA}`; break;
+         case 'NAND': expr = `~(${wA} & ${wB})`; break;
+         case 'NOR': expr = `~(${wA} | ${wB})`; break;
+         case 'XOR': expr = `${wA} ^ ${wB}`; break;
+         case 'XNOR': expr = `~(${wA} ^ ${wB})`; break;
+         case 'MUX': expr = `${wSel} ? ${wB} : ${wA}`; break;
+      }
+      code += `  assign ${wOut} = ${expr};\n`;
+   });
+   dffs.forEach(dff => {
+      const wD = getSourceWire(dff.id, 'd');
+      const wClk = getSourceWire(dff.id, 'clk');
+      const wOut = `wire_${getSafeId(dff.id)}`;
+      code += `\n  reg reg_${getSafeId(dff.id)};\n`;
+      code += `  always @(posedge ${wClk}) begin\n`;
+      code += `    reg_${getSafeId(dff.id)} <= ${wD};\n`;
+      code += `  end\n`;
+      code += `  assign ${wOut} = reg_${getSafeId(dff.id)};\n`;
+   });
+   code += `\n`;
+   outputs.forEach(out => {
+      const wIn = getSourceWire(out.id);
+      code += `  assign out_${getSafeId(out.id)} = ${wIn};\n`;
+   });
+   code += `endmodule\n`;
+   return code;
+};
+const simulateCircuit = (nodes: Node[], edges: Edge[], inputValues: number[]): number | null => {
+  let currentNodes = JSON.parse(JSON.stringify(nodes));
+  const inputNodes = currentNodes.filter((n: any) => n.type === 'inputNode').sort((a: any, b: any) => a.position.y - b.position.y);
+  inputNodes.forEach((n: any, idx: number) => {
+     n.data.value = inputValues[idx] ?? 0;
+     n.data.output = inputValues[idx] ?? 0;
+  });
