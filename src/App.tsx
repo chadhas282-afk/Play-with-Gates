@@ -838,3 +838,43 @@ function CodeNode({ id, data }: { id: string, data: { code?: string, output?: nu
       />
     </div>
   );
+
+interface DataPoint {
+  time: number;
+  ch1: number;
+  ch2: number;
+  ch3: number;
+  ch4: number;
+}
+function OscilloscopeNode({ data }: { data: { history?: DataPoint[] } }) {
+  const history = data.history || [];
+  return (
+    <div className="p-3 rounded-lg border-2 border-cyan-500 bg-slate-900 shadow-xl flex flex-col w-[350px] h-[220px] relative">
+      <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-around h-full py-4">
+         <div className="relative"><span className="absolute left-3 text-[8px] text-cyan-400 font-bold -translate-y-1/2 top-1/2">CH1</span><Handle type="target" position={Position.Left} id="ch-1" style={{ top: '20%' }} className="w-2 h-2 bg-cyan-400 border border-slate-900" /></div>
+         <div className="relative"><span className="absolute left-3 text-[8px] text-fuchsia-400 font-bold -translate-y-1/2 top-1/2">CH2</span><Handle type="target" position={Position.Left} id="ch-2" style={{ top: '40%' }} className="w-2 h-2 bg-fuchsia-400 border border-slate-900" /></div>
+         <div className="relative"><span className="absolute left-3 text-[8px] text-yellow-400 font-bold -translate-y-1/2 top-1/2">CH3</span><Handle type="target" position={Position.Left} id="ch-3" style={{ top: '60%' }} className="w-2 h-2 bg-yellow-400 border border-slate-900" /></div>
+         <div className="relative"><span className="absolute left-3 text-[8px] text-emerald-400 font-bold -translate-y-1/2 top-1/2">CH4</span><Handle type="target" position={Position.Left} id="ch-4" style={{ top: '80%' }} className="w-2 h-2 bg-emerald-400 border border-slate-900" /></div>
+      </div>
+      <div className="flex items-center gap-2 ml-6 mb-2">
+         <Activity className="w-4 h-4 text-cyan-500" />
+         <span className="text-[10px] font-bold text-cyan-500 tracking-widest">OSCILLOSCOPE</span>
+      </div>
+      <div className="flex-1 ml-6 bg-slate-950 rounded border border-slate-700 overflow-hidden relative">
+         <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={history} margin={{ top: 10, right: 10, left: -30, bottom: 0 }}>
+               <XAxis dataKey="time" hide />
+               <YAxis domain={[-0.2, 1.2]} hide />
+               <Tooltip 
+                 contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '8px' }}
+                 itemStyle={{ fontSize: '10px', fontWeight: 'bold' }}
+                 labelStyle={{ display: 'none' }}
+               />
+               <Line type="stepAfter" dataKey="ch1" stroke="#22d3ee" strokeWidth={2} dot={false} isAnimationActive={false} />
+               <Line type="stepAfter" dataKey="ch2" stroke="#e879f9" strokeWidth={2} dot={false} isAnimationActive={false} />
+               <Line type="stepAfter" dataKey="ch3" stroke="#facc15" strokeWidth={2} dot={false} isAnimationActive={false} />
+               <Line type="stepAfter" dataKey="ch4" stroke="#34d399" strokeWidth={2} dot={false} isAnimationActive={false} />
+            </LineChart>
+         </ResponsiveContainer>
+      </div>
+    </div>
