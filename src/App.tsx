@@ -278,3 +278,43 @@ export type GateType = typeof GATE_TYPES[number];
 type ASTNode = 
   | { type: 'VAR', name: string }
   | { type: 'NOT', arg: ASTNode }
+    | { type: 'OP', op: 'AND' | 'OR' | 'XOR', left: ASTNode, right: ASTNode };
+class Parser {
+  private currentToken: Token;
+  private lexer: Lexer;
+  constructor(lexer: Lexer) {
+    this.lexer = lexer;
+    this.currentToken = this.lexer.getNextToken();
+  }
+  private eat(type: TokenType) {
+    if (this.currentToken.type === type) {
+      this.currentToken = this.lexer.getNextToken();
+    } else {
+      throw new Error(`Unexpected token: ${this.currentToken.type}, expected ${type}`);
+    }
+  }
+  private factor(): ASTNode {
+    const token = this.currentToken;
+    if (token.type === 'NOT') {
+      this.eat('NOT');
+      return { type: 'NOT', arg: this.factor() };
+    } else if (token.type === 'VAR') {
+      this.eat('VAR');
+      return { type: 'VAR', name: token.value };
+    } else if (token.type === 'LPAREN') {
+      this.eat('LPAREN');
+      const node = this.expr();
+      this.eat('RPAREN');
+      return node;
+    }
+    throw new Error(`Parse error at token: ${token.value}`);
+  }
+  private term(): ASTNode {
+    let node = this.factor();
+    while (this.currentToken.type === 'AND') {
+      this.eat('AND');
+      node = { type: 'OP', op: 'AND', left: node, right: this.factor() };
+    }
+    return node;
+  }
+  public expr(): ASTNode {
