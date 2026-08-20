@@ -38,3 +38,43 @@ const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'LR') => 
         x: nodeWithPosition.x - nodeWidth / 2,
         y: nodeWithPosition.y - nodeHeight / 2,
       },
+      };
+    return newNode;
+  });
+  return { nodes: newNodes, edges };
+};
+type ClockListener = () => void;
+class MasterClock {
+  private listeners: ClockListener[] = [];
+  private intervalId: number | null = null;
+  private isRunning: boolean = true;
+  public frequencyHz: number = 1;
+  public subscribe(listener: ClockListener) {
+    this.listeners.push(listener);
+    return () => {
+      this.listeners = this.listeners.filter(l => l !== listener);
+    };
+  }
+  private tick = () => {
+    if (!this.isRunning) return;
+    this.listeners.forEach(l => l());
+  }
+  public setFrequency(hz: number) {
+    this.frequencyHz = hz;
+    this.restart();
+  }
+  public pause() {
+    this.isRunning = false;
+    this.stopInterval();
+  }
+  public play() {
+    this.isRunning = true;
+    this.restart();
+  }
+  public step() {
+    this.pause();
+    this.tick();
+  }
+  private stopInterval() {
+    if (this.intervalId !== null) {
+      clearInterval(this.intervalId);
