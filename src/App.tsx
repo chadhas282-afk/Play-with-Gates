@@ -438,3 +438,43 @@ function GlowingEdge({
 }
 function BusEdge({
   sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  style = {},
+  markerEnd,
+  data,
+}: EdgeProps) {
+  const [edgePath] = getBezierPath({
+    sourceX,
+    sourceY,
+    sourcePosition,
+    targetX,
+    targetY,
+    targetPosition,
+  });
+  const busValue = (data?.busValue as number) || 0;
+  const isActive = busValue > 0;
+  return (
+    <>
+      <BaseEdge 
+        path={edgePath} 
+        markerEnd={markerEnd} 
+        style={{
+           ...style,
+           strokeWidth: 8,
+           stroke: isActive ? '#6366f1' : '#334155', 
+           filter: isActive ? 'drop-shadow(0 0 8px rgba(99,102,241,0.8))' : 'none',
+           transition: 'stroke 0.2s, filter 0.2s'
+        }} 
+      />
+      {isActive && (
+         <circle r="4" fill="#818cf8">
+           <animateMotion dur="1.5s" repeatCount="indefinite" path={edgePath} />
+         </circle>
+      )}
+    </>
+  );
+}
