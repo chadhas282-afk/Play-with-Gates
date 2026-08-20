@@ -878,3 +878,43 @@ function OscilloscopeNode({ data }: { data: { history?: DataPoint[] } }) {
          </ResponsiveContainer>
       </div>
     </div>
+    );
+}
+const SEGMENTS = {
+  0: [1, 1, 1, 1, 1, 1, 0],
+  1: [0, 1, 1, 0, 0, 0, 0],
+  2: [1, 1, 0, 1, 1, 0, 1],
+  3: [1, 1, 1, 1, 0, 0, 1],
+  4: [0, 1, 1, 0, 0, 1, 1],
+  5: [1, 0, 1, 1, 0, 1, 1],
+  6: [1, 0, 1, 1, 1, 1, 1],
+  7: [1, 1, 1, 0, 0, 0, 0],
+  8: [1, 1, 1, 1, 1, 1, 1],
+  9: [1, 1, 1, 1, 0, 1, 1],
+  10: [1, 1, 1, 0, 1, 1, 1], 
+  11: [0, 0, 1, 1, 1, 1, 1], 
+  12: [1, 0, 0, 1, 1, 1, 0], 
+  13: [0, 1, 1, 1, 1, 0, 1], 
+  14: [1, 0, 0, 1, 1, 1, 1], 
+  15: [1, 0, 0, 0, 1, 1, 1], 
+};
+function SegmentDisplayNode({ data }: { data: { inputVals?: number[] } }) {
+  const inputs = data.inputVals || [0, 0, 0, 0];
+  const value = (inputs[3] << 3) | (inputs[2] << 2) | (inputs[1] << 1) | inputs[0];
+  const activeSegments = SEGMENTS[value as keyof typeof SEGMENTS] || SEGMENTS[0];
+  const segClass = (active: number) => cn(
+    "transition-colors duration-200", 
+    active ? "fill-neon-blue drop-shadow-[0_0_8px_rgba(59,130,246,1)]" : "fill-slate-800"
+  );
+  return (
+    <div className="p-4 rounded-xl border-2 border-slate-700 bg-slate-900 shadow-xl flex items-center gap-4">
+      <div className="flex flex-col justify-around h-[120px]">
+        {[0, 1, 2, 3].map(i => (
+          <Handle 
+            key={`in-${i}`} 
+            type="target" 
+            position={Position.Left} 
+            id={`in-${i}`} 
+            style={{ top: `${(i + 1) * 20}%` }} 
+            className="w-3 h-3 bg-slate-400 border-2 border-slate-900" 
+          />
