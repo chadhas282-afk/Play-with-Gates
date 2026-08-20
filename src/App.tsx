@@ -958,3 +958,43 @@ function SynthNode({ data }: { data: { value: number; freq?: number }, id: strin
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start();
+      oscRef.current = osc;
+      gainRef.current = gain;
+    } catch (e) {
+      console.error("Audio initialization failed:", e);
+    }
+    return () => {
+      try {
+        oscRef.current?.stop();
+        oscRef.current?.disconnect();
+        gainRef.current?.disconnect();
+      } catch (e) {}
+    };
+  }, [freq]);
+  useEffect(() => {
+    if (!gainRef.current || !getAudioContext()) return;
+    const ctx = getAudioContext();
+    const now = ctx.currentTime;
+    if (isHigh && !isMuted) {
+      if (ctx.state === 'suspended') ctx.resume();
+      gainRef.current.gain.setTargetAtTime(0.1, now, 0.05);
+    } else {
+      gainRef.current.gain.setTargetAtTime(0, now, 0.05);
+    }
+  }, [isHigh, isMuted]);
+  return (
+    <div className={cn(
+      "px-4 py-3 rounded-xl border-2 shadow-xl transition-colors flex flex-col items-center gap-2",
+      isHigh ? "border-purple-500 bg-slate-900 shadow-[0_0_25px_rgba(168,85,247,0.4)]" : "border-slate-700 bg-slate-900"
+    )}>
+      <Handle type="target" position={Position.Left} className="w-3 h-3 bg-slate-400 border-2 border-slate-900" />
+      <div className="flex items-center justify-between w-full gap-4">
+        <span className="text-xs font-bold tracking-wider text-slate-400">SYNTH</span>
+        <button 
+          onClick={() => setIsMuted(!isMuted)} 
+          className="text-slate-400 hover:text-white transition-colors nodrag"
+        >
+          {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+        </button>
+      </div>
+      <div className={cn(
