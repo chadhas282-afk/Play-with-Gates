@@ -518,4 +518,43 @@ function OutputNode({ data }: { data: { value: number } }) {
     <div className={cn(
       "px-5 py-3 rounded-xl border-2 shadow-xl transition-colors flex flex-col items-center gap-3",
       isHigh ? "border-neon-green bg-slate-900 shadow-[0_0_25px_rgba(34,197,94,0.4)]" : "border-slate-700 bg-slate-900"
-    )}></div>
+    )}>
+        <Handle type="target" position={Position.Left} className="w-4 h-4 bg-slate-400 border-2 border-slate-900" />
+      <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Output</span>
+      <div className="relative flex items-center justify-center">
+        {isHigh && (
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0.8 }}
+            animate={{ scale: 1.8, opacity: 0 }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: "easeOut" }}
+            className="absolute inset-0 rounded-full bg-neon-green"
+          />
+        )}
+        <div className={cn(
+          "relative w-12 h-12 rounded-full flex items-center justify-center text-xl font-black transition-all duration-300 z-10 border-2",
+          isHigh 
+            ? "bg-neon-green text-black border-green-400 shadow-[0_0_20px_rgba(34,197,94,1),inset_0_0_10px_rgba(255,255,255,0.5)]" 
+            : "bg-slate-800 text-slate-600 border-slate-700 shadow-[inset_0_0_10px_rgba(0,0,0,0.5)]"
+        )}>
+          {data.value ?? 0}
+        </div>
+      </div>
+    </div>
+  );
+}
+function GateNode({ data }: { data: { type: GateType; output: number } }) {
+  const expectedInputs = getExpectedInputCount(data.type);
+  const isHigh = data.output === 1;
+  return (
+    <div className={cn(
+      "p-1 rounded-xl border-2 shadow-lg bg-slate-900 transition-colors flex items-center justify-center min-w-[140px] min-h-[90px] overflow-hidden",
+      isHigh ? "border-neon-green shadow-[0_0_15px_rgba(34,197,94,0.2)]" : "border-slate-700"
+    )}>
+      {expectedInputs === 3 ? (
+        <>
+          <Handle type="target" position={Position.Left} id="a" style={{ top: '25%' }} className="w-3 h-3 bg-slate-400 border-2 border-slate-900" />
+          <Handle type="target" position={Position.Left} id="b" style={{ top: '75%' }} className="w-3 h-3 bg-slate-400 border-2 border-slate-900" />
+          <Handle type="target" position={Position.Bottom} id="sel" style={{ left: '50%' }} className="w-3 h-3 bg-neon-blue border-2 border-slate-900" />
+        </>
+      ) : expectedInputs === 2 ? (
+        <></>
