@@ -678,3 +678,43 @@ function MacroNode({ data }: { data: { name: string, numInputs: number, numOutpu
       {Array.from({ length: data.numInputs }).map((_, i) => (
         <Handle key={`in-${i}`} type="target" position={Position.Left} id={`in-${i}`} style={{ top: `${((i + 1) / (data.numInputs + 1)) * 100}%` }} className="w-3 h-3 bg-slate-400 border-2 border-slate-900" />
       ))}
+      {Array.from({ length: data.numOutputs }).map((_, i) => (
+        <Handle key={`out-${i}`} type="source" position={Position.Right} id={`out-${i}`} style={{ top: `${((i + 1) / (data.numOutputs + 1)) * 100}%` }} className={cn("w-3 h-3 border-2 border-slate-900", data.outputVals?.[i] === 1 ? "bg-neon-green" : "bg-slate-500")} />
+      ))}
+      <span className="font-bold text-slate-200">{data.name}</span>
+    </div>
+  );
+}
+function BusMergerNode({ data }: { data: { inputVals?: number[], busValue?: number } }) {
+  const inputs = data.inputVals || [0, 0, 0, 0];
+  const busValue = (inputs[3] << 3) | (inputs[2] << 2) | (inputs[1] << 1) | inputs[0];
+  return (
+    <div className="p-2 rounded-lg border-2 border-indigo-500 bg-slate-900 shadow-xl flex items-center justify-between w-24">
+      <div className="flex flex-col justify-around h-[80px]">
+        {[0, 1, 2, 3].map(i => (
+          <Handle 
+            key={`in-${i}`} 
+            type="target" 
+            position={Position.Left} 
+            id={`in-${i}`} 
+            style={{ top: `${(i + 1) * 20}%` }} 
+            className="w-2 h-2 bg-slate-400 border border-slate-900" 
+          />
+        ))}
+      </div>
+      <div className="flex flex-col items-center justify-center">
+         <span className="text-[10px] font-bold text-indigo-400 tracking-tighter">MERGE</span>
+         <span className="text-xs font-mono font-bold text-white bg-slate-800 px-1 rounded">{busValue.toString(16).toUpperCase()}</span>
+      </div>
+      <Handle 
+        type="source" 
+        position={Position.Right} 
+        id="bus-out"
+        className="w-4 h-4 bg-indigo-500 border-2 border-slate-900 rounded-none" 
+      />
+    </div>
+  );
+}
+function BusSplitterNode({ data }: { data: { busValue?: number } }) {
+  const busValue = data.busValue || 0;
+  return (
