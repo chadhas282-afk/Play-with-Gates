@@ -2398,3 +2398,43 @@ function CircuitCanvas({
                      className={cn("text-xs px-2 py-1 rounded font-bold transition", n.data.isMonitored ? "bg-neon-green text-black shadow-[0_0_10px_rgba(34,197,94,0.3)]" : "bg-slate-800 text-slate-500 hover:text-slate-300")}
                    >
                       {n.data.isMonitored ? "ON" : "OFF"}
+                      </button>
+                </div>
+             ))}
+             {nodes.length === 0 && <span className="text-xs text-slate-600">No nodes</span>}
+          </div>
+        </div>
+        <div className="space-y-3 mt-auto pt-4 border-t border-slate-700" id="tour-actions">
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Canvas Actions</h3>
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => setShow3D(!show3D)} className="w-full p-2 bg-emerald-900/40 text-emerald-400 rounded border border-emerald-500/50 text-sm font-bold flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(16,185,129,0.1)]">Toggle 3D Motherboard</motion.button>
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleTidyLayout} className="w-full p-2 bg-yellow-900/40 text-yellow-400 rounded border border-yellow-500/50 text-sm font-bold flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(234,179,8,0.1)]">Tidy Layout</motion.button>
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleCreateMacro} className="w-full p-2 bg-purple-900/40 text-purple-400 rounded border border-purple-500/50 text-sm font-bold flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(168,85,247,0.1)]">Save as Custom Gate</motion.button>
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => setShowTruthTable(true)} className="w-full p-2 bg-neon-blue/20 text-neon-blue rounded border border-neon-blue/50 text-sm font-bold flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(59,130,246,0.1)]">Analyze Truth Table</motion.button>
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleExportVerilog} className="w-full p-2 bg-slate-800 text-neon-green rounded border border-neon-green/50 text-sm font-bold flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(34,197,94,0.1)]">Export to Verilog</motion.button>
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleShare} className="w-full p-2 bg-slate-800 text-slate-300 rounded border border-slate-700 text-sm font-bold flex items-center justify-center gap-2">Copy Share Link</motion.button>
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => setShowProjectManager(true)} className="w-full p-2 bg-slate-800 text-slate-300 rounded border border-slate-700 text-sm font-bold flex items-center justify-center gap-2">Manage Projects</motion.button>
+          <ScreenRecorder />
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleClear} className="w-full p-2 bg-red-900/20 text-red-400 rounded border border-red-800/50 text-sm font-bold">Clear Canvas</motion.button>
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={() => setShowTutorial(true)} className="w-full p-2 bg-indigo-900/30 text-indigo-400 rounded border border-indigo-800/50 text-sm font-bold flex items-center justify-center gap-2 mt-2"><HelpCircle className="w-4 h-4"/> Take a Tour</motion.button>
+        </div>
+      </motion.div>
+      <div className="flex-1 h-full relative" ref={reactFlowWrapper}>
+        <div id="tour-clock-panel" className="absolute top-4 left-4 z-50 bg-slate-900/90 backdrop-blur-md p-3 rounded-xl border-2 border-slate-700 shadow-xl flex items-center gap-4">
+           <div className="flex items-center gap-2">
+             <button onClick={() => { globalClock.play(); setClockRunning(true); }} className={cn("p-2 rounded hover:bg-slate-700", clockRunning ? "text-neon-green" : "text-slate-400")}>
+               <Play className="w-5 h-5" />
+             </button>
+             <button onClick={() => { globalClock.pause(); setClockRunning(false); }} className={cn("p-2 rounded hover:bg-slate-700", !clockRunning ? "text-yellow-400" : "text-slate-400")}>
+               <Pause className="w-5 h-5" />
+             </button>
+             <button onClick={() => { globalClock.step(); setClockRunning(false); }} className="p-2 rounded text-neon-blue hover:bg-slate-700">
+               <StepForward className="w-5 h-5" />
+             </button>
+           </div>
+           <div className="h-6 w-px bg-slate-700"></div>
+           <div className="flex items-center gap-2 text-slate-300">
+             <FastForward className="w-4 h-4 text-slate-400" />
+             <input 
+               type="range" min="1" max="20" value={clockFreq} 
+               onChange={(e) => { 
+                 const val = parseInt(e.target.value);
