@@ -2438,3 +2438,43 @@ function CircuitCanvas({
                type="range" min="1" max="20" value={clockFreq} 
                onChange={(e) => { 
                  const val = parseInt(e.target.value);
+                 setClockFreq(val);
+                 globalClock.setFrequency(val);
+               }} 
+               className="w-24 accent-neon-blue"
+             />
+             <span className="text-xs font-mono w-8">{clockFreq}Hz</span>
+           </div>
+        </div>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          onSelectionChange={onSelectionChange}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          defaultEdgeOptions={{ type: 'default' }}
+          fitView
+          className="bg-black"
+          proOptions={{ hideAttribution: true }}
+        >
+          <Background color="#334155" gap={20} size={1} />
+          <Controls className="bg-slate-800 border-slate-700 fill-slate-300" />
+          <Panel position="top-right" className="bg-slate-900/80 p-3 rounded-lg border border-slate-700 backdrop-blur-md shadow-lg flex flex-col items-end gap-3 pointer-events-none">
+             <p className="text-sm text-slate-300 text-right pointer-events-auto">Drag components from the sidebar.<br/>Connect nodes to see real-time logic.</p>
+             <AnimatePresence>
+                {selectedNodes.length > 0 && (
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleDeleteSelected}
+                    className="flex items-center gap-2 bg-red-900/90 text-red-400 border border-red-800 px-4 py-2 rounded-lg font-bold shadow-lg pointer-events-auto hover:bg-red-800 hover:text-white transition"
+                  >
+                    <Trash2 className="w-4 h-4" />
