@@ -2038,3 +2038,43 @@ function CircuitCanvas({
           const dEdge = incomingEdges.find(e => e.targetHandle === 'in-d');
           const a = getVal(currentNodes.find(n => n.id === aEdge?.source), aEdge);
           const b = getVal(currentNodes.find(n => n.id === bEdge?.source), bEdge);
+          const c = getVal(currentNodes.find(n => n.id === cEdge?.source), cEdge);
+          const d = getVal(currentNodes.find(n => n.id === dEdge?.source), dEdge);
+          let out = 0;
+          let error = undefined;
+          try {
+             const fn = new Function('A', 'B', 'C', 'D', node.data.code || 'return 0;');
+             out = fn(a, b, c, d) || 0;
+          } catch (e: any) {
+             error = e.message;
+          }
+          if (out !== node.data.output || error !== node.data.error || node.data.a !== a || node.data.b !== b || node.data.c !== c || node.data.d !== d) {
+             settling = true; changed = true;
+             return { ...node, data: { ...node.data, output: out, error, a, b, c, d } };
+          }
+        }
+        if (node.type === 'oscilloscopeNode') {
+          const ch1Edge = incomingEdges.find(e => e.targetHandle === 'ch-1');
+          const ch2Edge = incomingEdges.find(e => e.targetHandle === 'ch-2');
+          const ch3Edge = incomingEdges.find(e => e.targetHandle === 'ch-3');
+          const ch4Edge = incomingEdges.find(e => e.targetHandle === 'ch-4');
+          const ch1 = getVal(currentNodes.find(n => n.id === ch1Edge?.source), ch1Edge);
+          const ch2 = getVal(currentNodes.find(n => n.id === ch2Edge?.source), ch2Edge);
+          const ch3 = getVal(currentNodes.find(n => n.id === ch3Edge?.source), ch3Edge);
+          const ch4 = getVal(currentNodes.find(n => n.id === ch4Edge?.source), ch4Edge);
+          const history = node.data.history || [];
+          const now = Date.now();
+          const lastPoint = history[history.length - 1];
+          const changedVals = !lastPoint || lastPoint.ch1 !== ch1 || lastPoint.ch2 !== ch2 || lastPoint.ch3 !== ch3 || lastPoint.ch4 !== ch4;
+          if (changedVals || (history.length > 0 && now - lastPoint.time > 100)) {
+             const newHistory = [...history, { time: now, ch1, ch2, ch3, ch4 }];
+             if (newHistory.length > 50) newHistory.shift();
+             changed = true;
+             return { ...node, data: { ...node.data, history: newHistory } };
+          }
+        }
+        if (node.type === 'delayNode') {
+          const valEdge = incomingEdges[0];
+          const sourceNode = currentNodes.find(n => n.id === valEdge?.source);
+          const val = getVal(sourceNode, valEdge);
+          if (val !== node.data.inVal) {
