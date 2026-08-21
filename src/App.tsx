@@ -2518,3 +2518,43 @@ function CircuitCanvas({
       <AnimatePresence>
         {verilogCode !== null && (
          <motion.div 
+         initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black/80 z-50 flex items-center justify-center p-8 backdrop-blur-sm"
+         >
+            <motion.div 
+               initial={{ scale: 0.9, y: 30 }}
+               animate={{ scale: 1, y: 0 }}
+               exit={{ scale: 0.9, y: 30 }}
+               className="bg-slate-900 border-2 border-neon-green rounded-xl w-full max-w-3xl max-h-full flex flex-col shadow-[0_0_50px_rgba(34,197,94,0.4)]"
+            >
+               <div className="p-4 border-b border-slate-700 flex justify-between items-center">
+                  <h2 className="text-xl font-bold text-neon-green tracking-wider">Verilog Hardware Export</h2>
+                  <button onClick={() => setVerilogCode(null)} className="text-slate-400 hover:text-white font-bold">Close</button>
+               </div>
+               <div className="p-6 overflow-y-auto flex-1">
+                  <pre className="text-sm font-mono text-slate-300 bg-slate-950 p-6 rounded-lg border border-slate-800 overflow-x-auto shadow-inner">
+                    {verilogCode}
+                  </pre>
+               </div>
+               <div className="p-4 border-t border-slate-700">
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => { navigator.clipboard.writeText(verilogCode); alert('Code copied to clipboard!'); }} 
+                    className="w-full py-3 bg-neon-green text-black font-bold rounded-lg transition shadow-[0_0_15px_rgba(34,197,94,0.4)]"
+                  >
+                    Copy to Clipboard
+                  </motion.button>
+               </div>
+            </motion.div>
+         </motion.div>
+      )}
+      </AnimatePresence>
+    </div>
+  );
+}
+type Tab = 'sandbox' | 'canvas' | 'challenge';
+function App() {
+  const [activeTab, setActiveTab] = useState<Tab>('sandbox');
