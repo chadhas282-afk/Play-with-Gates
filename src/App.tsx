@@ -1638,3 +1638,43 @@ function CircuitCanvas({
      }
   };
   const handleBuildExpression = () => {
+     try {
+      if (!expression.trim()) return;
+      const { nodes: newNodes, edges: newEdges } = buildCircuitFromExpression(expression);
+      const boundNodes = newNodes.map((n: any) => 
+        n.type === 'inputNode' ? { ...n, data: { ...n.data, onToggle: onToggleInput } } : n
+      );
+      setNodes(boundNodes);
+      setEdges(newEdges);
+    } catch (e: any) {
+      alert("Failed to parse expression: " + e.message);
+    }
+  };
+  useEffect(() => {
+    if (isControlled) return; 
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#circuit=')) {
+      try {
+        const dataStr = atob(hash.replace('#circuit=', ''));
+        const data = JSON.parse(dataStr);
+        if (data.nodes && data.edges) {
+          setNodes(data.nodes.map((n: any) => 
+            (n.type === 'inputNode' || n.type === 'clockNode') 
+              ? { ...n, data: { ...n.data, onToggle: onToggleInput } } 
+              : n
+          ));
+          setEdges(data.edges);
+        }
+      } catch (e) {
+        console.error("Failed to load circuit from URL");
+      }
+    }
+  }, [isControlled, setNodes, setEdges]);
+  const handleClear = () => {
+    if (confirm('Are you sure you want to clear the canvas?')) {
+      setNodes([]);
+      setEdges([]);
+    }
+  };
+  const handleSaveProject = (name: string) => {
+    try {
