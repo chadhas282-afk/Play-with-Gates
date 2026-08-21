@@ -1758,3 +1758,43 @@ function CircuitCanvas({
     const edgeType = isBus ? 'busEdge' : 'default';
     const newEdge = { ...params, id: `e-${params.source}-${params.target}-${Date.now()}`, type: edgeType };
     setEdges((eds) => addEdge(newEdge, eds));
+    }, [setEdges]);
+  const handleSynthesize = async (truthTable: { inputs: number[], outputs: number[] }[]) => {
+    const numInputs = truthTable[0].inputs.length;
+    const newNodes: Node[] = [];
+    const newEdges: Edge[] = [];
+    let idCounter = 1000;
+    const getSynthId = (prefix: string) => `${prefix}-${idCounter++}`;
+    const inputIds: string[] = [];
+    for (let i = 0; i < numInputs; i++) {
+      const id = getSynthId('in');
+      inputIds.push(id);
+      newNodes.push({ id, type: 'inputNode', position: { x: 0, y: 0 }, data: { id, value: 0, onToggle: onToggleInput }, deletable: true });
+    }
+    const minterms = truthTable.filter(r => r.outputs[0] === 1);
+    if (minterms.length === 0) {
+      alert("No TRUE outputs to synthesize! (Circuit is always 0)");
+      return;
+    }
+    const productOutputs: string[] = [];
+    for (const row of minterms) {
+       const termInputs: string[] = [];
+       for (let i = 0; i < numInputs; i++) {
+          if (row.inputs[i] === 0) {
+             const notId = getSynthId('not');
+             newNodes.push({ id: notId, type: 'gateNode', position: { x: 0, y: 0 }, data: { type: 'NOT', output: 0 } });
+             newEdges.push({ id: getSynthId('e'), source: inputIds[i], target: notId, targetHandle: 'a', type: 'default' });
+             termInputs.push(notId);
+          } else {
+             termInputs.push(inputIds[i]);
+          }
+       }
+       let currentAndOut = termInputs[0];
+       for (let i = 1; i < termInputs.length; i++) {
+          const andId = getSynthId('and');
+          newNodes.push({ id: andId, type: 'gateNode', position: { x: 0, y: 0 }, data: { type: 'AND', output: 0 } });
+          newEdges.push({ id: getSynthId('e'), source: currentAndOut, target: andId, targetHandle: 'a', type: 'default' });
+          newEdges.push({ id: getSynthId('e'), source: termInputs[i], target: andId, targetHandle: 'b', type: 'default' });
+          currentAndOut = andId;
+       }
+       productOutputs.push(currentAndOut);
