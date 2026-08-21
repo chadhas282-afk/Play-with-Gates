@@ -1438,3 +1438,43 @@ function ProjectManager({ isOpen, onClose, onSave, onLoad }: ProjectManagerProps
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
         <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          className="bg-slate-900 border-2 border-slate-700 rounded-2xl shadow-2xl w-full max-w-xl flex flex-col overflow-hidden"
+        >
+          <div className="p-4 border-b-2 border-slate-800 flex justify-between items-center bg-slate-950">
+            <h2 className="text-xl font-bold text-slate-200 flex items-center gap-2">
+              <FolderOpen className="text-neon-blue" /> Workspace Manager
+            </h2>
+            <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+          <div className="p-6 flex flex-col gap-6">
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                placeholder="New Project Name..." 
+                value={newProjectName}
+                onChange={(e) => setNewProjectName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSaveNew()}
+                className="flex-1 bg-slate-800 border border-slate-600 rounded p-2 text-white outline-none focus:border-neon-blue"
+              />
+              <button 
+                onClick={handleSaveNew}
+                className="bg-neon-blue/20 text-neon-blue border border-neon-blue/50 px-4 py-2 rounded font-bold hover:bg-neon-blue hover:text-black transition-colors flex items-center gap-2"
+              >
+                <Save className="w-4 h-4" /> Save Current
+              </button>
+            </div>
+            <div className="flex flex-col gap-2 max-h-64 overflow-y-auto custom-scrollbar">
+              {projects.length === 0 && (
+                 <p className="text-slate-500 text-center py-4">No saved projects found.</p>
+              )}
+              {projects.sort((a, b) => b.updatedAt - a.updatedAt).map(p => (
+                 <div key={p.name} className="flex items-center justify-between bg-slate-800 p-3 rounded border border-slate-700">
+                    <div className="flex flex-col">
+                       <span className="font-bold text-slate-200">{p.name}</span>
+                       <span className="text-xs text-slate-500">{new Date(p.updatedAt).toLocaleString()}</span>
+                    </div>
