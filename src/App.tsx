@@ -1558,3 +1558,43 @@ function Circuit3DViewer({ nodes, edges }: Circuit3DViewerProps) {
              points={[line.p1, [line.p1[0], 0.1, line.p2[2]], line.p2]} 
              color={line.color} 
              lineWidth={3} 
+              position={[0, 0.1, 0]} 
+          />
+        ))}
+        <Environment preset="city" />
+        <OrbitControls makeDefault autoRotate autoRotateSpeed={0.5} maxPolarAngle={Math.PI / 2.1} />
+      </Canvas>
+    </div>
+  );
+}
+const nodeTypes: NodeTypes = {
+  inputNode: InputNode,
+  gateNode: GateNode,
+  outputNode: OutputNode,
+  clockNode: ClockNode,
+  dffNode: DFFNode,
+  delayNode: DelayNode,
+  busMergerNode: BusMergerNode,
+  busSplitterNode: BusSplitterNode,
+  aluNode: ALUNode,
+  memoryNode: MemoryNode,
+  codeNode: CodeNode,
+  oscilloscopeNode: OscilloscopeNode,
+  macroNode: MacroNode,
+  segmentDisplayNode: SegmentDisplayNode,
+  synthNode: SynthNode,
+};
+const edgeTypes = {
+  default: GlowingEdge,
+  busEdge: BusEdge,
+};
+let id = 0;
+const getId = () => `node_${id++}`;
+function CircuitCanvas({ 
+  nodes: controlledNodes, 
+  edges: controlledEdges, 
+  onNodesChange: controlledOnNodesChange, 
+  onEdgesChange: controlledOnEdgesChange,
+  setNodes: controlledSetNodes,
+  setEdges: controlledSetEdges,
+  allowedGates = GATE_TYPES
