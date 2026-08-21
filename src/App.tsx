@@ -1598,3 +1598,43 @@ function CircuitCanvas({
   setNodes: controlledSetNodes,
   setEdges: controlledSetEdges,
   allowedGates = GATE_TYPES
+  }: any = {}) {
+  const [localNodes, setLocalNodes, onLocalNodesChange] = useNodesState([]);
+  const [localEdges, setLocalEdges, onLocalEdgesChange] = useEdgesState([]);
+  const isControlled = !!controlledNodes;
+  const nodes = isControlled ? controlledNodes : localNodes;
+  const setNodes = isControlled ? controlledSetNodes : setLocalNodes;
+  const onNodesChange = isControlled ? controlledOnNodesChange : onLocalNodesChange;
+  const edges = isControlled ? controlledEdges : localEdges;
+  const setEdges = isControlled ? controlledSetEdges : setLocalEdges;
+  const onEdgesChange = isControlled ? controlledOnEdgesChange : onLocalEdgesChange;
+  const reactFlowWrapper = useRef<HTMLDivElement>(null);
+  const [macros, setMacros] = useState<any[]>(() => {
+    try { return JSON.parse(localStorage.getItem('play_with_gates_macros') || '[]'); } catch { return []; }
+  });
+  const [expression, setExpression] = useState('');
+  const [verilogCode, setVerilogCode] = useState<string | null>(null);
+  const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
+  const [showTruthTable, setShowTruthTable] = useState(false);
+  const [showProjectManager, setShowProjectManager] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [show3D, setShow3D] = useState(false);
+  const [clockRunning, setClockRunning] = useState(true);
+  const [clockFreq, setClockFreq] = useState(1);
+  const onSelectionChange = useCallback(({ nodes }: { nodes: Node[] }) => {
+    setSelectedNodes(nodes.map(n => n.id));
+  }, []);
+  const handleDeleteSelected = useCallback(() => {
+    setNodes(nds => nds.filter(n => !selectedNodes.includes(n.id)));
+    setEdges(eds => eds.filter(e => !selectedNodes.includes(e.source) && !selectedNodes.includes(e.target)));
+    setSelectedNodes([]);
+  }, [selectedNodes, setNodes, setEdges]);
+  const handleExportVerilog = () => {
+     try {
+       const code = exportToVerilog(nodes, edges);
+       setVerilogCode(code);
+     } catch (e: any) {
+       alert("Failed to export Verilog: " + e.message);
+     }
+  };
+  const handleBuildExpression = () => {
