@@ -1398,3 +1398,43 @@ interface Project {
 }
 interface ProjectManagerProps {
   isOpen: boolean;
+  onClose: () => void;
+  onSave: (name: string) => void;
+  onLoad: (data: string) => void;
+}
+function ProjectManager({ isOpen, onClose, onSave, onLoad }: ProjectManagerProps) {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [newProjectName, setNewProjectName] = useState('');
+  useEffect(() => {
+    if (isOpen) {
+      loadProjectsList();
+    }
+  }, [isOpen]);
+  const loadProjectsList = () => {
+    try {
+      const raw = localStorage.getItem('play_with_gates_projects');
+      if (raw) {
+        setProjects(JSON.parse(raw));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  const handleSaveNew = () => {
+    if (!newProjectName.trim()) return;
+    onSave(newProjectName.trim());
+    setNewProjectName('');
+    setTimeout(loadProjectsList, 100);
+  };
+  const handleDelete = (name: string) => {
+    if (confirm(`Are you sure you want to delete project "${name}"?`)) {
+      const updated = projects.filter(p => p.name !== name);
+      localStorage.setItem('play_with_gates_projects', JSON.stringify(updated));
+      setProjects(updated);
+    }
+  };
+  if (!isOpen) return null;
+  return (
+    <AnimatePresence>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <motion.div 
