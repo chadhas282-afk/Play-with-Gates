@@ -2318,3 +2318,43 @@ function CircuitCanvas({
         <div className="space-y-3">
           <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Logic Gates</h3>
           <motion.div 
+          whileHover={{ scale: 1.05, borderColor: '#64748b' }}
+            whileTap={{ scale: 0.95 }}
+            className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
+            onDragStart={(e: any) => onDragStart(e, 'dffNode')}
+            draggable
+          >
+            D Flip-Flop
+          </motion.div>
+          {allowedGates.map((type: GateType) => (
+            <motion.div 
+              key={type}
+              whileHover={{ scale: 1.05, borderColor: '#64748b' }}
+              whileTap={{ scale: 0.95 }}
+              className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
+              onDragStart={(e: any) => onDragStart(e, 'gateNode', type)}
+              draggable
+            >
+              {type} Gate
+            </motion.div>
+          ))}
+        </div>
+        <div className="space-y-3 mt-4">
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Custom Macros</h3>
+          {macros.map(macro => (
+            <motion.div 
+              key={macro.id}
+              whileHover={{ scale: 1.05, backgroundColor: 'rgba(59,130,246,0.2)' }}
+              whileTap={{ scale: 0.95 }}
+              className="p-3 border-2 border-neon-blue rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold text-neon-blue"
+              onDragStart={(e: any) => {
+                 onDragStart(e, 'macroNode');
+                 e.dataTransfer.setData('application/macro', JSON.stringify(macro));
+              }}
+              draggable
+            >
+              {macro.name}
+            </motion.div>
+          ))}
+          <motion.button 
+             whileHover={{ scale: 1.02 }}
