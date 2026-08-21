@@ -1518,3 +1518,43 @@ function Circuit3DViewer({ nodes, edges }: Circuit3DViewerProps) {
       const p1 = getPos(sourceNode);
       const p2 = getPos(targetNode);
       const isHigh = edge.animated; 
+      const val = sourceNode.data.output || sourceNode.data.value; 
+      const color = isHigh || val === 1 ? '#22d3ee' : '#334155'; 
+      return { id: edge.id, p1, p2, color };
+    }).filter(Boolean);
+  }, [edges, nodes]);
+  return (
+    <div className="absolute inset-0 z-40 bg-slate-950">
+      <Canvas camera={{ position: [0, 20, 20], fov: 45 }}>
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 10, 10]} intensity={1.5} color="#3b82f6" />
+        <pointLight position={[-10, 10, -10]} intensity={1} color="#e879f9" />
+        <Box args={[40, 0.5, 40]} position={[0, -0.5, 0]}>
+          <meshStandardMaterial color="#0f172a" roughness={0.8} />
+        </Box>
+        {nodes.map(node => {
+          const pos = getPos(node);
+          const isHigh = node.data.output === 1 || node.data.value === 1;
+          const chipColor = isHigh ? '#3b82f6' : '#1e293b';
+          return (
+            <group key={node.id} position={pos}>
+              <Box args={[2, 0.5, 1]}>
+                <meshStandardMaterial color={chipColor} roughness={0.5} metalness={0.8} />
+              </Box>
+              <Text 
+                position={[0, 0.3, 0]} 
+                rotation={[-Math.PI / 2, 0, 0]} 
+                fontSize={0.2} 
+                color="#cbd5e1"
+              >
+                {node.type?.replace('Node', '').toUpperCase()}
+              </Text>
+            </group>
+          );
+        })}
+        {lines.map((line: any) => (
+          <DreiLine 
+             key={line.id} 
+             points={[line.p1, [line.p1[0], 0.1, line.p2[2]], line.p2]} 
+             color={line.color} 
+             lineWidth={3} 
