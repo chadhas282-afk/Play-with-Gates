@@ -2278,3 +2278,43 @@ function CircuitCanvas({
             Synth (E5)
           </motion.div>
           <motion.div 
+          whileHover={{ scale: 1.05, borderColor: '#0ea5e9' }}
+            whileTap={{ scale: 0.95 }}
+            className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
+            onDragStart={(e: any) => onDragStart(e, 'segmentDisplayNode')}
+            draggable
+          >
+            7-Segment HEX
+          </motion.div>
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">IC Library</h3>
+          <motion.div 
+            whileHover={{ scale: 1.05, borderColor: '#ef4444' }}
+            whileTap={{ scale: 0.95 }}
+            className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
+            onDragStart={(e: any) => onDragStart(e, 'aluNode')}
+            draggable
+          >
+            4-Bit ALU
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.05, borderColor: '#10b981' }}
+            whileTap={{ scale: 0.95 }}
+            className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
+            onDragStart={(e: any) => onDragStart(e, 'memoryNode')}
+            draggable
+          >
+            16B RAM
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.05, borderColor: '#d946ef' }}
+            whileTap={{ scale: 0.95 }}
+            className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
+            onDragStart={(e: any) => onDragStart(e, 'codeNode')}
+            draggable
+          >
+            JS Scripting Node
+          </motion.div>
+        </div>
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Logic Gates</h3>
+          <motion.div 
