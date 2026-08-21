@@ -2198,3 +2198,43 @@ function CircuitCanvas({
           <motion.div 
             whileHover={{ scale: 1.05, borderColor: '#3b82f6' }}
             whileTap={{ scale: 0.95 }}
+            className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
+            onDragStart={(e: any) => onDragStart(e, 'clockNode')}
+            draggable
+          >
+            Clock (Oscillator)
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.05, borderColor: '#eab308' }}
+            whileTap={{ scale: 0.95 }}
+            className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
+            onDragStart={(e: any) => onDragStart(e, 'delayNode')}
+            draggable
+          >
+            Delay (1 Tick)
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.05, borderColor: '#22c55e' }}
+            whileTap={{ scale: 0.95 }}
+            className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
+            onDragStart={(e: any) => onDragStart(e, 'outputNode')}
+            draggable
+          >
+            Output LED
+          </motion.div>
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Routing & Buses</h3>
+          <motion.div 
+            whileHover={{ scale: 1.05, borderColor: '#6366f1' }}
+            whileTap={{ scale: 0.95 }}
+            className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
+            onDragStart={(e: any) => onDragStart(e, 'busMergerNode')}
+            draggable
+          >
+            Bus Merger (4-bit)
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.05, borderColor: '#6366f1' }}
+            whileTap={{ scale: 0.95 }}
+            className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
+            onDragStart={(e: any) => onDragStart(e, 'busSplitterNode')}
+            draggable
