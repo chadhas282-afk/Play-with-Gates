@@ -1357,4 +1357,44 @@ function TruthTableAnalyzer({ nodes, edges, onClose, onSynthesize }: TruthTableA
             </thead>
             <tbody>
               {truthTable.map((row, rowIdx) => (
-                <tr key={rowIdx} className="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors"></tr>
+                <tr key={rowIdx} className="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                  {row.inputs.map((val, colIdx) => (
+                    <td key={`val-in-${colIdx}`} className="py-2 px-1 text-sm text-slate-300 font-mono border-r border-slate-800">
+                      {val}
+                    </td>
+                  ))}
+                  {row.outputs.map((val, colIdx) => (
+                    <td 
+                      key={`val-out-${colIdx}`} 
+                      className={`py-2 px-1 text-sm font-mono font-bold ${val === 1 ? 'text-neon-green' : 'text-slate-500'}`}
+                    >
+                      {val}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : null}
+      </div>
+      {onSynthesize && truthTable && truthTable !== 'TOO_MANY_INPUTS' && outputNodes.length > 0 && (
+         <div className="p-4 border-t-2 border-slate-800 bg-slate-900">
+           <button 
+             onClick={() => onSynthesize(truthTable as any)}
+             className="w-full py-2 bg-neon-blue text-black font-bold rounded hover:bg-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+           >
+             Synthesize Minimal Circuit
+           </button>
+           <p className="text-[10px] text-slate-500 text-center mt-2">Replaces current canvas with a Sum-of-Products diagram</p>
+         </div>
+      )}
+    </motion.div>
+  );
+}
+interface Project {
+  name: string;
+  data: string; 
+  updatedAt: number;
+}
+interface ProjectManagerProps {
+  isOpen: boolean;
