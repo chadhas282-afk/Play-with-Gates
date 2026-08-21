@@ -1838,3 +1838,43 @@ function CircuitCanvas({
         newData = { type: gateType, output: 0 };
       } else if (type === 'outputNode') {
         newData = { value: 0 };
+        } else if (type === 'clockNode') {
+        newData = { value: 0, onToggle: onToggleInput };
+      } else if (type === 'dffNode') {
+        newData = { output: 0, prevClk: 0 };
+      } else if (type === 'macroNode') {
+         const macroStr = event.dataTransfer.getData('application/macro');
+         if (macroStr) {
+            const macroDef = JSON.parse(macroStr);
+            newData = { name: macroDef.name, numInputs: macroDef.numInputs, numOutputs: macroDef.numOutputs, macroDef, outputVals: Array(macroDef.numOutputs).fill(0) };
+         }
+      } else if (type === 'segmentDisplayNode') {
+         newData = { inputVals: [0, 0, 0, 0] };
+      } else if (type === 'synthNode') {
+         const freq = event.dataTransfer.getData('application/freq') || '440';
+         newData = { value: 0, freq: parseInt(freq) };
+      } else if (type === 'delayNode') {
+         newData = { value: 0, inVal: 0 };
+      } else if (type === 'busMergerNode') {
+         newData = { inputVals: [0,0,0,0], busValue: 0, output: 0 };
+      } else if (type === 'busSplitterNode') {
+         newData = { busValue: 0, output: 0 };
+      } else if (type === 'aluNode') {
+         newData = { busA: 0, busB: 0, op0: 0, op1: 0, out: 0, carry: 0, output: 0 };
+      } else if (type === 'memoryNode') {
+         newData = { addr: 0, dataIn: 0, we: 0, dataOut: 0, memory: Array(16).fill(0), output: 0 };
+      } else if (type === 'codeNode') {
+         newData = { code: 'return (A & B) | C;', output: 0 };
+      } else if (type === 'oscilloscopeNode') {
+         newData = { history: [] };
+      }
+      const newId = getId();
+      const newNode = {
+        id: newId,
+        type,
+        position,
+        data: { id: newId, ...newData },
+      };
+      setNodes((nds) => nds.concat(newNode));
+    },
+    [setNodes, onToggleInput]
