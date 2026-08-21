@@ -2238,3 +2238,43 @@ function CircuitCanvas({
             className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
             onDragStart={(e: any) => onDragStart(e, 'busSplitterNode')}
             draggable
+            >
+            Bus Splitter (4-bit)
+          </motion.div>
+        </div>
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">A/V Nodes</h3>
+          <motion.div 
+            whileHover={{ scale: 1.05, borderColor: '#06b6d4' }}
+            whileTap={{ scale: 0.95 }}
+            className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
+            onDragStart={(e: any) => onDragStart(e, 'oscilloscopeNode')}
+            draggable
+          >
+            Oscilloscope (4-Ch)
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.05, borderColor: '#a855f7' }}
+            whileTap={{ scale: 0.95 }}
+            className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
+            onDragStart={(e: any) => {
+               onDragStart(e, 'synthNode');
+               e.dataTransfer.setData('application/freq', '440');
+            }}
+            draggable
+          >
+            Synth (A4)
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.05, borderColor: '#a855f7' }}
+            whileTap={{ scale: 0.95 }}
+            className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
+            onDragStart={(e: any) => {
+               onDragStart(e, 'synthNode');
+               e.dataTransfer.setData('application/freq', '659');
+            }}
+            draggable
+          >
+            Synth (E5)
+          </motion.div>
+          <motion.div 
