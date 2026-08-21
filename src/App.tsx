@@ -1478,3 +1478,43 @@ function ProjectManager({ isOpen, onClose, onSave, onLoad }: ProjectManagerProps
                        <span className="font-bold text-slate-200">{p.name}</span>
                        <span className="text-xs text-slate-500">{new Date(p.updatedAt).toLocaleString()}</span>
                     </div>
+                     <div className="flex gap-2">
+                       <button 
+                         onClick={() => { onLoad(p.data); onClose(); }}
+                         className="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-white rounded text-sm transition-colors"
+                       >
+                         Load
+                       </button>
+                       <button 
+                         onClick={() => handleDelete(p.name)}
+                         className="p-1 text-slate-500 hover:text-red-400 transition-colors"
+                       >
+                         <Trash2 className="w-5 h-5" />
+                       </button>
+                    </div>
+                 </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </AnimatePresence>
+  );
+}
+interface Circuit3DViewerProps {
+  nodes: Node[];
+  edges: Edge[];
+}
+function Circuit3DViewer({ nodes, edges }: Circuit3DViewerProps) {
+  const scale = 0.05;
+  const getPos = (n: Node) => {
+     return [(n.position.x * scale) - 10, 0, (n.position.y * scale) - 10] as [number, number, number];
+  };
+  const lines = useMemo(() => {
+    return edges.map(edge => {
+      const sourceNode = nodes.find(n => n.id === edge.source);
+      const targetNode = nodes.find(n => n.id === edge.target);
+      if (!sourceNode || !targetNode) return null;
+      const p1 = getPos(sourceNode);
+      const p2 = getPos(targetNode);
+      const isHigh = edge.animated; 
