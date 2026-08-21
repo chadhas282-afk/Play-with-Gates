@@ -1678,3 +1678,44 @@ function CircuitCanvas({
   };
   const handleSaveProject = (name: string) => {
     try {
+      const data = { nodes, edges };
+      const dataStr = btoa(JSON.stringify(data));
+      const raw = localStorage.getItem('play_with_gates_projects');
+      let projects = [];
+      if (raw) projects = JSON.parse(raw);
+      const existing = projects.findIndex((p: any) => p.name === name);
+      if (existing >= 0) {
+        projects[existing].data = dataStr;
+        projects[existing].updatedAt = Date.now();
+      } else {
+        projects.push({ name, data: dataStr, updatedAt: Date.now() });
+      }
+      localStorage.setItem('play_with_gates_projects', JSON.stringify(projects));
+    } catch (e) {
+      alert('Failed to save project.');
+    }
+  };
+  const handleLoadProject = (dataStr: string) => {
+    try {
+      const data = JSON.parse(atob(dataStr));
+      if (data.nodes && data.edges) {
+        setNodes(data.nodes.map((n: any) => 
+          (n.type === 'inputNode' || n.type === 'clockNode') 
+            ? { ...n, data: { ...n.data, onToggle: onToggleInput } } 
+            : n
+        ));
+        setEdges(data.edges);
+      }
+    } catch (e) {
+      alert('Failed to load project.');
+    }
+  };
+  const handleShare = () => {
+    try {
+      const data = { nodes, edges };
+      const dataStr = btoa(JSON.stringify(data));
+      window.location.hash = `circuit=${dataStr}`;
+      navigator.clipboard.writeText(window.location.href);
+      alert('Shareable link copied to clipboard!');
+    } catch (e) {
+      alert('Failed to generate share link.');
