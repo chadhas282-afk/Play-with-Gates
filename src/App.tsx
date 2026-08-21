@@ -1278,3 +1278,43 @@ function ScreenRecorder() {
           <Square className="w-4 h-4 fill-current" /> Stop Recording
         </button>
       ) : (
+        <button 
+          onClick={startRecording}
+          className="w-full p-2 bg-slate-800 text-slate-300 hover:text-white rounded border border-slate-700 text-sm font-bold flex items-center justify-center gap-2 transition-colors"
+        >
+          <Video className="w-4 h-4" /> Record WebM
+        </button>
+      )}
+    </div>
+  );
+}
+interface TruthTableAnalyzerProps {
+  nodes: Node[];
+  edges: Edge[];
+  onClose: () => void;
+  onSynthesize?: (table: { inputs: number[], outputs: number[] }[]) => void;
+}
+function TruthTableAnalyzer({ nodes, edges, onClose, onSynthesize }: TruthTableAnalyzerProps) {
+  const inputNodes = useMemo(() => {
+    return nodes.filter(n => n.type === 'inputNode').sort((a, b) => a.position.y - b.position.y);
+  }, [nodes]);
+  const outputNodes = useMemo(() => {
+    return nodes.filter(n => n.type === 'outputNode').sort((a, b) => a.position.y - b.position.y);
+  }, [nodes]);
+  const truthTable = useMemo(() => {
+    if (inputNodes.length === 0 || outputNodes.length === 0) return null;
+    if (inputNodes.length > 6) return 'TOO_MANY_INPUTS';
+    const n = inputNodes.length;
+    const table = [];
+    for (let i = 0; i < (1 << n); i++) {
+      const inputs = [];
+      for (let j = n - 1; j >= 0; j--) {
+        inputs.push((i >> j) & 1);
+      }
+      const outputs = simulateCircuitMulti(nodes, edges, inputs);
+      table.push({ inputs, outputs });
+    }
+    return table;
+  }, [nodes, edges, inputNodes, outputNodes]);
+  return (
+    <motion.div
