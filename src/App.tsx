@@ -1918,3 +1918,43 @@ function CircuitCanvas({
           const valB = getVal(sourceBNode, valBEdge);
           const newOutput = evaluateGate(node.data.type, [valA as number, valB as number]);
           if (newOutput !== node.data.output) {
+            settling = true;
+            changed = true;
+            return { ...node, data: { ...node.data, output: newOutput } };
+          }
+        }
+        if (node.type === 'dffNode') {
+          const valDEdge = incomingEdges.find(e => e.targetHandle === 'd');
+          const valClkEdge = incomingEdges.find(e => e.targetHandle === 'clk');
+          const sourceDNode = currentNodes.find(n => n.id === valDEdge?.source);
+          const sourceClkNode = currentNodes.find(n => n.id === valClkEdge?.source);
+          const valD = getVal(sourceDNode, valDEdge);
+          const valClk = getVal(sourceClkNode, valClkEdge);
+          let newState = node.data.output;
+          const newPrevClk = valClk;
+          if (valClk === 1 && node.data.prevClk === 0) {
+             newState = valD;
+          }
+          if (newState !== node.data.output || newPrevClk !== node.data.prevClk) {
+             settling = true;
+             changed = true;
+             return { ...node, data: { ...node.data, output: newState, prevClk: newPrevClk } };
+          }
+        }
+        if (node.type === 'macroNode') {
+           const macroDef = node.data.macroDef;
+           const inputs = [];
+           for (let i = 0; i < macroDef.numInputs; i++) {
+              const edge = incomingEdges.find(e => e.targetHandle === `in-${i}`);
+              const sourceNode = currentNodes.find(n => n.id === edge?.source);
+              inputs.push(getVal(sourceNode, edge));
+           }
+           const outVals = simulateCircuitMulti(macroDef.nodes, macroDef.edges, inputs);
+           let changedMacro = false;
+           const oldOutVals = node.data.outputVals || [];
+           if (outVals.length !== oldOutVals.length || outVals.some((v, i) => v !== oldOutVals[i])) {
+              changedMacro = true;
+           }
+           if (changedMacro) {
+              settling = true;
+              changed = true;
