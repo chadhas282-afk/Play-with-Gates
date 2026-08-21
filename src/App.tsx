@@ -2158,3 +2158,43 @@ function CircuitCanvas({
             filter: isHigh ? 'drop-shadow(0 0 5px rgba(34,197,94,0.8))' : 'none'
           }
         };
+        }
+      return edge;
+    });
+    if (edgesChanged || changed) {
+      setEdges((eds) => eds.map(e => {
+         const current = currentEdges.find(ce => ce.id === e.id);
+         return current ? current : e;
+      }));
+    }
+  }, [nodes, edges, setNodes, setEdges]);
+  const onDragStart = (event: React.DragEvent, nodeType: string, gateType?: string) => {
+    event.dataTransfer.setData('application/reactflow', nodeType);
+    if (gateType) event.dataTransfer.setData('application/gatetype', gateType);
+    event.dataTransfer.effectAllowed = 'move';
+  };
+  return (
+    <div className="flex w-full h-full bg-slate-950 font-sans relative overflow-hidden">
+      <TutorialOverlay run={showTutorial} onFinish={() => setShowTutorial(false)} />
+      <motion.div 
+        initial={{ x: -50, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="w-64 bg-slate-900 border-r border-slate-700 p-4 flex flex-col gap-6 overflow-y-auto z-10 shadow-xl custom-scrollbar"
+        id="tour-sidebar"
+      >
+        <h2 className="text-xl font-bold text-slate-200">Components</h2>
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">I/O Nodes</h3>
+          <motion.div 
+            whileHover={{ scale: 1.05, borderColor: '#3b82f6' }}
+            whileTap={{ scale: 0.95 }}
+            className="p-3 border-2 border-slate-700 rounded-lg bg-slate-800 cursor-grab transition-colors text-center font-bold"
+            onDragStart={(e: any) => onDragStart(e, 'inputNode')}
+            draggable
+          >
+            Input Toggle
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.05, borderColor: '#3b82f6' }}
+            whileTap={{ scale: 0.95 }}
