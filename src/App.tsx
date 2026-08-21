@@ -1798,3 +1798,43 @@ function CircuitCanvas({
           currentAndOut = andId;
        }
        productOutputs.push(currentAndOut);
+        }
+    let finalOut = productOutputs[0];
+    for (let i = 1; i < productOutputs.length; i++) {
+       const orId = getSynthId('or');
+       newNodes.push({ id: orId, type: 'gateNode', position: { x: 0, y: 0 }, data: { type: 'OR', output: 0 } });
+       newEdges.push({ id: getSynthId('e'), source: finalOut, target: orId, targetHandle: 'a', type: 'default' });
+       newEdges.push({ id: getSynthId('e'), source: productOutputs[i], target: orId, targetHandle: 'b', type: 'default' });
+       finalOut = orId;
+    }
+    const outId = getSynthId('out');
+    newNodes.push({ id: outId, type: 'outputNode', position: { x: 0, y: 0 }, data: { id: outId, value: 0 }, deletable: true });
+    newEdges.push({ id: getSynthId('e'), source: finalOut, target: outId, targetHandle: 'in', type: 'default' });
+    const { nodes: layoutedNodes, edges: layoutedEdges } = await getLayoutedElements(newNodes, newEdges);
+    setNodes(layoutedNodes);
+    setEdges(layoutedEdges);
+    setShowTruthTable(false);
+  };
+  const onDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
+  const onDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+      if (!reactFlowWrapper.current) return;
+      const type = event.dataTransfer.getData('application/reactflow');
+      const gateType = event.dataTransfer.getData('application/gatetype') as GateType;
+      if (!type) return;
+      const bounds = reactFlowWrapper.current.getBoundingClientRect();
+      const position = {
+        x: event.clientX - bounds.left,
+        y: event.clientY - bounds.top,
+      };
+      let newData = {};
+      if (type === 'inputNode') {
+        newData = { value: 0, onToggle: onToggleInput };
+      } else if (type === 'gateNode') {
+        newData = { type: gateType, output: 0 };
+      } else if (type === 'outputNode') {
+        newData = { value: 0 };
