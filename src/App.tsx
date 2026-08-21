@@ -2478,3 +2478,43 @@ function CircuitCanvas({
                     className="flex items-center gap-2 bg-red-900/90 text-red-400 border border-red-800 px-4 py-2 rounded-lg font-bold shadow-lg pointer-events-auto hover:bg-red-800 hover:text-white transition"
                   >
                     <Trash2 className="w-4 h-4" />
+                    Delete Selected
+                  </motion.button>
+                )}
+             </AnimatePresence>
+          </Panel>
+        </ReactFlow>
+        <AnimatePresence>
+        </AnimatePresence>
+        <AnimatePresence>
+          {showTruthTable && (
+            <TruthTableAnalyzer 
+              nodes={nodes} 
+              edges={edges} 
+              onClose={() => setShowTruthTable(false)}
+              onSynthesize={handleSynthesize}
+            />
+          )}
+        </AnimatePresence>
+        <ProjectManager 
+          isOpen={showProjectManager} 
+          onClose={() => setShowProjectManager(false)} 
+          onSave={handleSaveProject} 
+          onLoad={handleLoadProject} 
+        />
+        <MultiplayerManager 
+          nodes={nodes}
+          edges={edges}
+          setNodes={setNodes}
+          setEdges={setEdges}
+        />
+        <div id="tour-multiplayer" className="absolute top-4 right-20 w-10 h-10 pointer-events-none z-40"></div>
+      </div>
+      <AnimatePresence>
+        {show3D && (
+          <Circuit3DViewer nodes={nodes} edges={edges} />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {verilogCode !== null && (
+         <motion.div 
