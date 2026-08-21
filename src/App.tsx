@@ -2358,3 +2358,43 @@ function CircuitCanvas({
           ))}
           <motion.button 
              whileHover={{ scale: 1.02 }}
+             whileTap={{ scale: 0.98 }}
+             onClick={handleCreateMacro} 
+             className="w-full p-2 bg-slate-800 text-slate-300 rounded hover:bg-slate-700 transition border border-dashed border-slate-500 text-xs font-bold"
+          >
+            + Create Macro
+          </motion.button>
+        </div>
+        <div className="space-y-3 mt-4">
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Auto-Builder</h3>
+          <div className="flex gap-2">
+            <input 
+              type="text" 
+              value={expression} 
+              onChange={e => setExpression(e.target.value)} 
+              placeholder="e.g. A * B + !C"
+              className="flex-1 bg-slate-900 text-slate-200 p-2 rounded border border-slate-700 text-sm font-mono focus:border-neon-blue focus:outline-none w-0"
+            />
+            <motion.button 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleBuildExpression}
+              className="p-2 bg-neon-blue text-black font-bold text-xs rounded shadow-[0_0_15px_rgba(59,130,246,0.4)]"
+            >
+              Build
+            </motion.button>
+          </div>
+        </div>
+        <div className="space-y-3 mt-4">
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Oscilloscope</h3>
+          <div className="space-y-1 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
+             {nodes.map(n => (
+                <div key={n.id} className="flex items-center justify-between">
+                   <span className="text-xs text-slate-400 font-mono truncate mr-2" title={n.id}>
+                      {n.type?.replace('Node', '')}_{n.id.replace('node_', '').replace('auto_', '')}
+                   </span>
+                   <button 
+                     onClick={() => setNodes((nds: any) => nds.map((nd: any) => nd.id === n.id ? { ...nd, data: { ...nd.data, isMonitored: !nd.data.isMonitored } } : nd))}
+                     className={cn("text-xs px-2 py-1 rounded font-bold transition", n.data.isMonitored ? "bg-neon-green text-black shadow-[0_0_10px_rgba(34,197,94,0.3)]" : "bg-slate-800 text-slate-500 hover:text-slate-300")}
+                   >
+                      {n.data.isMonitored ? "ON" : "OFF"}
