@@ -1719,3 +1719,42 @@ function CircuitCanvas({
       alert('Shareable link copied to clipboard!');
     } catch (e) {
       alert('Failed to generate share link.');
+       }
+  };
+  const onToggleInput = useCallback((nodeId: string, val: number) => {
+    setNodes((nds) => nds.map(n => n.id === nodeId ? { ...n, data: { ...n.data, value: val } } : n));
+  }, [setNodes]);
+  const handleTidyLayout = useCallback(() => {
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+      nodes,
+      edges
+    );
+    setNodes([...layoutedNodes]);
+    setEdges([...layoutedEdges]);
+  }, [nodes, edges, setNodes, setEdges]);
+  const handleCreateMacro = () => {
+    const name = prompt("Enter a name for your custom Macro gate:");
+    if (!name) return;
+    const numInputs = nodes.filter(n => n.type === 'inputNode').length;
+    const numOutputs = nodes.filter(n => n.type === 'outputNode').length;
+    if (numInputs === 0 || numOutputs === 0) {
+       alert("A macro must have at least one Input and one Output node!");
+       return;
+    }
+    const newMacro = {
+       id: `macro_${Date.now()}`,
+       name,
+       nodes,
+       edges,
+       numInputs,
+       numOutputs
+    };
+    const updatedMacros = [...macros, newMacro];
+    setMacros(updatedMacros);
+    localStorage.setItem('play_with_gates_macros', JSON.stringify(updatedMacros));
+  };
+  const onConnect = useCallback((params: Connection) => {
+    const isBus = params.sourceHandle === 'bus-out' || params.targetHandle === 'bus-in';
+    const edgeType = isBus ? 'busEdge' : 'default';
+    const newEdge = { ...params, id: `e-${params.source}-${params.target}-${Date.now()}`, type: edgeType };
+    setEdges((eds) => addEdge(newEdge, eds));
