@@ -1878,3 +1878,43 @@ function CircuitCanvas({
       setNodes((nds) => nds.concat(newNode));
     },
     [setNodes, onToggleInput]
+    );
+  useEffect(() => {
+    let changed = false;
+    let currentNodes = [...nodes];
+    let settling = true;
+    let iterations = 0;
+    while (settling && iterations < 50) {
+      settling = false;
+      iterations++;
+      currentNodes = currentNodes.map(node => {
+        if (node.type === 'inputNode' || node.type === 'clockNode') return node;
+        const incomingEdges = edges.filter(e => e.target === node.id);
+        const getVal = (sourceNode: any, edge: any) => {
+          if (!sourceNode) return 0;
+          if (sourceNode.type === 'dffNode') {
+             return edge?.sourceHandle === 'qbar' ? (sourceNode.data.output === 0 ? 1 : 0) : sourceNode.data.output;
+          }
+          if (sourceNode.type === 'macroNode' && edge?.sourceHandle) {
+             const outIdx = parseInt(edge.sourceHandle.replace('out-', ''));
+             return sourceNode.data.outputVals?.[outIdx] || 0;
+          }
+          if (sourceNode.type === 'busSplitterNode' && edge?.sourceHandle) {
+             const outIdx = parseInt(edge.sourceHandle.replace('out-', ''));
+             const busVal = sourceNode.data.output || 0;
+             return (busVal >> outIdx) & 1;
+          }
+          if (sourceNode.type === 'aluNode') {
+             return edge?.sourceHandle === 'carry-out' ? (sourceNode.data.carry || 0) : (sourceNode.data.out || 0);
+          }
+          return sourceNode.data.output ?? sourceNode.data.value ?? 0;
+        };
+        if (node.type === 'gateNode') {
+          const valAEdge = incomingEdges.find(e => e.targetHandle === 'a');
+          const valBEdge = incomingEdges.find(e => e.targetHandle === 'b');
+          const sourceANode = currentNodes.find(n => n.id === valAEdge?.source);
+          const sourceBNode = currentNodes.find(n => n.id === valBEdge?.source);
+          const valA = getVal(sourceANode, valAEdge);
+          const valB = getVal(sourceBNode, valBEdge);
+          const newOutput = evaluateGate(node.data.type, [valA as number, valB as number]);
+          if (newOutput !== node.data.output) {
