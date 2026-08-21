@@ -2118,3 +2118,43 @@ function CircuitCanvas({
      if (node.data.isMonitored) {
          let val = 0;
          if (node.type === 'outputNode' || node.type === 'inputNode' || node.type === 'clockNode') {
+          val = node.data.value ?? 0;
+         } else {
+            val = node.data.output ?? 0;
+         }
+         const history = [...(node.data.history || []), val].slice(-50);
+         return { ...node, data: { ...node.data, history } };
+     }
+     return node;
+  });
+  if (changed) {
+      setNodes(currentNodes);
+    }
+    let edgesChanged = false;
+    const currentEdges = edges.map(edge => {
+      const sourceNode = currentNodes.find(n => n.id === edge.source);
+      const getVal = (sNode: any, edg: any) => {
+          if (!sNode) return 0;
+          if (sNode.type === 'dffNode') {
+             return edg?.sourceHandle === 'qbar' ? (sNode.data.output === 0 ? 1 : 0) : sNode.data.output;
+          }
+          if (sNode.type === 'macroNode') {
+             const outIndex = parseInt(edg?.sourceHandle?.replace('out-', '') || '0');
+             return sNode.data.outputVals?.[outIndex] ?? 0;
+          }
+          return sNode.data.output ?? sNode.data.value ?? 0;
+      };
+      const val = getVal(sourceNode, edge);
+      const isHigh = val === 1;
+      const isCurrentlyAnimated = edge.animated;
+      if (isHigh !== isCurrentlyAnimated) {
+        edgesChanged = true;
+        return {
+          ...edge,
+          animated: isHigh,
+          style: { 
+            stroke: isHigh ? '#22c55e' : '#475569', 
+            strokeWidth: 4,
+            filter: isHigh ? 'drop-shadow(0 0 5px rgba(34,197,94,0.8))' : 'none'
+          }
+        };
