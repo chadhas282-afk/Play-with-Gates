@@ -1958,3 +1958,43 @@ function CircuitCanvas({
            if (changedMacro) {
               settling = true;
               changed = true;
+              return { ...node, data: { ...node.data, outputVals: outVals } };
+           }
+        }
+        if (node.type === 'busMergerNode') {
+           const inputs = [];
+           for (let i = 0; i < 4; i++) {
+              const edge = incomingEdges.find(e => e.targetHandle === `in-${i}`);
+              const sourceNode = currentNodes.find(n => n.id === edge?.source);
+              inputs.push(getVal(sourceNode, edge));
+           }
+           const busValue = (inputs[3] << 3) | (inputs[2] << 2) | (inputs[1] << 1) | inputs[0];
+           if (busValue !== node.data.busValue || inputs.some((v,i) => v !== (node.data.inputVals?.[i]))) {
+              settling = true;
+              changed = true;
+              return { ...node, data: { ...node.data, busValue, inputVals: inputs, output: busValue } };
+           }
+        }
+        if (node.type === 'busSplitterNode') {
+          const valEdge = incomingEdges.find(e => e.targetHandle === 'bus-in');
+          const sourceNode = currentNodes.find(n => n.id === valEdge?.source);
+          const busValue = getVal(sourceNode, valEdge);
+          if (busValue !== node.data.busValue) {
+             settling = true;
+             changed = true;
+             return { ...node, data: { ...node.data, busValue, output: busValue } };
+          }
+        }
+        if (node.type === 'aluNode') {
+          const busAEdge = incomingEdges.find(e => e.targetHandle === 'bus-a');
+          const busBEdge = incomingEdges.find(e => e.targetHandle === 'bus-b');
+          const op0Edge = incomingEdges.find(e => e.targetHandle === 'op-0');
+          const op1Edge = incomingEdges.find(e => e.targetHandle === 'op-1');
+          const busA = getVal(currentNodes.find(n => n.id === busAEdge?.source), busAEdge);
+          const busB = getVal(currentNodes.find(n => n.id === busBEdge?.source), busBEdge);
+          const op0 = getVal(currentNodes.find(n => n.id === op0Edge?.source), op0Edge);
+          const op1 = getVal(currentNodes.find(n => n.id === op1Edge?.source), op1Edge);
+          const opCode = (op1 << 1) | op0;
+          let out = 0;
+          let carry = 0;
+          if (opCode === 0) {
