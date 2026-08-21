@@ -1198,3 +1198,43 @@ function MultiplayerManager({ nodes, edges, setNodes, setEdges }: MultiplayerPro
                         <span className="flex-shrink-0 mx-4 text-slate-500 text-xs font-bold uppercase">OR</span>
                         <div className="flex-grow border-t border-slate-700"></div>
                     </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-slate-500 uppercase">Join a Room</label>
+                      <div className="flex gap-2">
+                        <input 
+                          type="text" 
+                          placeholder="Paste Host ID..." 
+                          value={joinId}
+                          onChange={(e) => setJoinId(e.target.value)}
+                          className="flex-1 bg-slate-800 border border-slate-700 p-2 rounded text-slate-300 font-mono text-sm outline-none focus:border-neon-blue" 
+                        />
+                        <button onClick={handleJoin} disabled={!joinId} className="px-4 bg-neon-blue text-black font-bold rounded hover:bg-blue-400 disabled:opacity-50">Join</button>
+                      </div>
+                    </div>
+                   </>
+                 )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+function ScreenRecorder() {
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({
+        video: { displaySurface: 'browser' },
+        audio: false
+      });
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+      mediaRecorderRef.current = mediaRecorder;
+      chunksRef.current = [];
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          chunksRef.current.push(e.data);
+        }
