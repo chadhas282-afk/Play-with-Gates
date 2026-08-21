@@ -1998,3 +1998,43 @@ function CircuitCanvas({
           let out = 0;
           let carry = 0;
           if (opCode === 0) {
+            const sum = busA + busB;
+            out = sum & 0xF;
+            carry = (sum > 0xF) ? 1 : 0;
+          } else if (opCode === 1) {
+            out = Math.max(0, busA - busB) & 0xF;
+          } else if (opCode === 2) {
+            out = busA & busB;
+          } else if (opCode === 3) {
+            out = busA | busB;
+          }
+          if (out !== node.data.out || carry !== node.data.carry || busA !== node.data.busA || busB !== node.data.busB || op0 !== node.data.op0 || op1 !== node.data.op1) {
+             settling = true; changed = true;
+             return { ...node, data: { busA, busB, op0, op1, out, carry, output: out } };
+          }
+        }
+        if (node.type === 'memoryNode') {
+          const addrEdge = incomingEdges.find(e => e.targetHandle === 'bus-addr');
+          const dataEdge = incomingEdges.find(e => e.targetHandle === 'bus-data');
+          const weEdge = incomingEdges.find(e => e.targetHandle === 'we');
+          const addr = getVal(currentNodes.find(n => n.id === addrEdge?.source), addrEdge);
+          const dataIn = getVal(currentNodes.find(n => n.id === dataEdge?.source), dataEdge);
+          const we = getVal(currentNodes.find(n => n.id === weEdge?.source), weEdge);
+          let memory = node.data.memory || Array(16).fill(0);
+          if (we === 1 && memory[addr] !== dataIn) {
+            memory = [...memory];
+            memory[addr] = dataIn;
+          }
+          const dataOut = memory[addr];
+          if (addr !== node.data.addr || dataIn !== node.data.dataIn || we !== node.data.we || dataOut !== node.data.dataOut || memory !== node.data.memory) {
+             settling = true; changed = true;
+             return { ...node, data: { addr, dataIn, we, dataOut, memory, output: dataOut } };
+          }
+        }
+        if (node.type === 'codeNode') {
+          const aEdge = incomingEdges.find(e => e.targetHandle === 'in-a');
+          const bEdge = incomingEdges.find(e => e.targetHandle === 'in-b');
+          const cEdge = incomingEdges.find(e => e.targetHandle === 'in-c');
+          const dEdge = incomingEdges.find(e => e.targetHandle === 'in-d');
+          const a = getVal(currentNodes.find(n => n.id === aEdge?.source), aEdge);
+          const b = getVal(currentNodes.find(n => n.id === bEdge?.source), bEdge);
