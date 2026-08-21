@@ -2558,3 +2558,43 @@ function CircuitCanvas({
 type Tab = 'sandbox' | 'canvas' | 'challenge';
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('sandbox');
+  return (
+    <div className="min-h-screen flex flex-col font-sans">
+      <header className="bg-panel-dark border-b border-slate-800 p-4 shadow-md flex justify-between items-center z-10">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center border border-slate-700 shadow-sm relative overflow-hidden">
+             <div className="absolute inset-0 bg-neon-blue/10 blur-xl"></div>
+             <Cpu className="text-neon-blue w-6 h-6 relative z-10" />
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-neon-blue to-neon-green">
+            Play with Gates
+          </h1>
+        </div>
+        <nav className="flex gap-2">
+          <NavButton active={activeTab === 'sandbox'} onClick={() => setActiveTab('sandbox')} icon={<Cpu className="w-4 h-4" />}>Gate Sandbox</NavButton>
+          <NavButton active={activeTab === 'canvas'} onClick={() => setActiveTab('canvas')} icon={<Network className="w-4 h-4" />}>Circuit Canvas</NavButton>
+          <NavButton active={activeTab === 'challenge'} onClick={() => setActiveTab('challenge')} icon={<Target className="w-4 h-4" />}>Challenge</NavButton>
+        </nav>
+      </header>
+      <main className="flex-1 overflow-hidden relative bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-bg-dark to-black">
+        {activeTab === 'sandbox' && <SingleGateExplorer />}
+        {activeTab === 'canvas' && <div className="absolute inset-0"><CircuitCanvas /></div>}
+        {activeTab === 'challenge' && <div className="absolute inset-0"><ChallengeMode /></div>}
+      </main>
+    </div>
+  );
+}
+function NavButton({ active, children, onClick, icon }: { active: boolean, children: React.ReactNode, onClick: () => void, icon?: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "px-4 py-2 rounded-md font-medium text-sm transition-all duration-300 flex items-center gap-2",
+        active 
+          ? "bg-slate-800 text-neon-blue border border-slate-700 shadow-[0_0_15px_rgba(59,130,246,0.15)]" 
+          : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent"
+      )}
+    >
+      {icon}
+      {children}
+    </button>
