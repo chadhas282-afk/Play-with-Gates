@@ -1318,3 +1318,43 @@ function TruthTableAnalyzer({ nodes, edges, onClose, onSynthesize }: TruthTableA
   }, [nodes, edges, inputNodes, outputNodes]);
   return (
     <motion.div
+    initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      className="absolute top-20 right-6 w-96 max-h-[70vh] bg-slate-900/95 backdrop-blur-md border-2 border-slate-700 rounded-xl shadow-2xl flex flex-col z-50 overflow-hidden"
+    >
+      <div className="flex items-center justify-between p-4 border-b-2 border-slate-800 bg-slate-900">
+        <div className="flex items-center gap-2 text-neon-blue">
+          <Table className="w-5 h-5" />
+          <h2 className="font-bold tracking-wider">TRUTH TABLE</h2>
+        </div>
+        <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+      <div className="p-4 overflow-y-auto custom-scrollbar">
+        {inputNodes.length === 0 ? (
+          <p className="text-slate-400 text-center text-sm py-8">Add input nodes to see the truth table.</p>
+        ) : outputNodes.length === 0 ? (
+          <p className="text-slate-400 text-center text-sm py-8">Add output nodes to see the truth table.</p>
+        ) : truthTable === 'TOO_MANY_INPUTS' ? (
+          <p className="text-red-400 text-center text-sm py-8">Too many inputs. Maximum 6 inputs allowed to prevent freezing.</p>
+        ) : truthTable && truthTable.length > 0 ? (
+          <table className="w-full text-center border-collapse">
+            <thead>
+              <tr className="border-b-2 border-slate-700">
+                {inputNodes.map((_, i) => (
+                  <th key={`in-${i}`} className="py-2 px-1 text-xs text-slate-400 font-bold uppercase tracking-widest border-r border-slate-800">
+                    IN {i + 1}
+                  </th>
+                ))}
+                {outputNodes.map((_, i) => (
+                  <th key={`out-${i}`} className="py-2 px-1 text-xs text-neon-green font-bold uppercase tracking-widest">
+                    OUT {i + 1}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {truthTable.map((row, rowIdx) => (
+                <tr key={rowIdx} className="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors"></tr>
