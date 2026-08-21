@@ -1238,3 +1238,43 @@ function ScreenRecorder() {
         if (e.data.size > 0) {
           chunksRef.current.push(e.data);
         }
+        };
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `circuit-recording-${Date.now()}.webm`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        setIsRecording(false);
+        stream.getTracks().forEach(track => track.stop());
+      };
+      stream.getVideoTracks()[0].onended = () => {
+         if (mediaRecorderRef.current?.state === 'recording') {
+            mediaRecorderRef.current.stop();
+         }
+      };
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      console.error("Error starting screen recording", err);
+    }
+  };
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      mediaRecorderRef.current.stop();
+    }
+  };
+  return (
+    <div id="tour-record" className="w-full">
+      {isRecording ? (
+        <button 
+          onClick={stopRecording}
+          className="w-full p-2 bg-red-900/40 text-red-400 rounded border border-red-500/50 text-sm font-bold flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(239,68,68,0.4)] animate-pulse"
+        >
+          <Square className="w-4 h-4 fill-current" /> Stop Recording
+        </button>
+      ) : (
