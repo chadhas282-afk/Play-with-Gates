@@ -2078,3 +2078,43 @@ function CircuitCanvas({
           const sourceNode = currentNodes.find(n => n.id === valEdge?.source);
           const val = getVal(sourceNode, valEdge);
           if (val !== node.data.inVal) {
+            settling = true;
+            changed = true;
+            return { ...node, data: { ...node.data, inVal: val } };
+          }
+        }
+        if (node.type === 'outputNode' || node.type === 'synthNode') {
+          const valEdge = incomingEdges[0];
+          const sourceNode = currentNodes.find(n => n.id === valEdge?.source);
+          const val = getVal(sourceNode, valEdge);
+          if (val !== node.data.value) {
+            settling = true;
+            changed = true;
+            return { ...node, data: { ...node.data, value: val } };
+          }
+        }
+        if (node.type === 'segmentDisplayNode') {
+           const inputs = [];
+           for (let i = 0; i < 4; i++) {
+              const edge = incomingEdges.find(e => e.targetHandle === `in-${i}`);
+              const sourceNode = currentNodes.find(n => n.id === edge?.source);
+              inputs.push(getVal(sourceNode, edge));
+           }
+           let changedSeg = false;
+           const oldInputs = node.data.inputVals || [0,0,0,0];
+           if (inputs.some((v, i) => v !== oldInputs[i])) {
+              changedSeg = true;
+           }
+           if (changedSeg) {
+              settling = true;
+              changed = true;
+              return { ...node, data: { ...node.data, inputVals: inputs } };
+           }
+        }
+        return node;
+    });
+  }
+  currentNodes = currentNodes.map(node => {
+     if (node.data.isMonitored) {
+         let val = 0;
+         if (node.type === 'outputNode' || node.type === 'inputNode' || node.type === 'clockNode') {
