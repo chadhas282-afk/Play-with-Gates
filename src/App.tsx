@@ -2878,3 +2878,43 @@ function SingleGateExplorer() {
             onClick={() => handleTypeChange(type)}
             className={cn(
               "px-6 py-2 rounded-full font-bold text-sm transition-all duration-300 border",
+              activeType === type 
+                ? "bg-neon-blue/20 text-neon-blue border-neon-blue shadow-[0_0_15px_rgba(59,130,246,0.3)]" 
+                : "bg-slate-800/80 text-slate-400 border-slate-700 hover:bg-slate-700 hover:text-slate-200"
+            )}
+          >
+            {type}
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-col xl:flex-row gap-16 items-center justify-center mt-8">
+        <div className="flex items-center gap-0 lg:gap-2 relative flex-1 min-w-[300px] justify-center scale-90 md:scale-100 xl:scale-110 xl:ml-8">
+          <div className="flex flex-col gap-[3rem] justify-center mr-0">
+            {expectedInputs > 1 ? (
+              <>
+                <ToggleSwitch label="Input A" value={inputs[0]} onChange={(val) => handleInputToggle(0, val)} />
+                <ToggleSwitch label="Input B" value={inputs[1]} onChange={(val) => handleInputToggle(1, val)} />
+              </>
+            ) : (
+              <ToggleSwitch label="Input A" value={inputs[0]} onChange={(val) => handleInputToggle(0, val)} />
+            )}
+          </div>
+          <div className="flex flex-col justify-center gap-[6.5rem]">
+             {expectedInputs > 1 ? (
+               <>
+                 <AnimatedWire value={inputs[0]} width={60} />
+                 <AnimatedWire value={inputs[1]} width={60} />
+               </>
+             ) : (
+               <AnimatedWire value={inputs[0]} width={60} />
+             )}
+          </div>
+          <div className="relative z-10 mx-1">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeType}
+                initial={{ opacity: 0, scale: 0.8, filter: 'blur(4px)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, scale: 0.8, filter: 'blur(4px)' }}
+                transition={{ duration: 0.3 }}
+              >
