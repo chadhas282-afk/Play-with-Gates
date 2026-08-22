@@ -3518,3 +3518,43 @@ export const LEVELS: Level[] = [
     ]
   },
   {
+     "id": 8,
+    "title": "2-Bit Comparator",
+    "description": "Compare two 2-bit numbers (A and B). Output 1 if they are equal.",
+    "allowedGates": [
+      "XNOR",
+      "AND",
+      "XOR",
+      "NOT",
+      "NOR"
+    ],
+    "targetTruthTable": [
+      {
+        "inputs": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "output": 1
+      },
+      {
+        "inputs": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          0,
+          0,
+          1,
+          0
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
