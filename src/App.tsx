@@ -2638,3 +2638,43 @@ interface ToggleSwitchProps {
   value: number;
   onChange: (val: number) => void;
   label?: string;
+  }
+function ToggleSwitch({ value, onChange, label }: ToggleSwitchProps) {
+  const isHigh = value === 1;
+  return (
+    <div className="flex flex-col items-center gap-3">
+      {label && <span className="text-slate-400 font-mono text-sm uppercase tracking-wider">{label}</span>}
+      <button
+        onClick={() => onChange(isHigh ? 0 : 1)}
+        className={cn(
+          "relative w-14 h-24 rounded-lg border-2 flex flex-col items-center p-1 cursor-pointer transition-colors duration-300 overflow-hidden",
+          isHigh 
+            ? "border-neon-green bg-neon-green/10 shadow-[0_0_15px_rgba(34,197,94,0.3)]" 
+            : "border-slate-700 bg-slate-900 shadow-inner"
+        )}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-transparent pointer-events-none" />
+        <motion.div
+          className={cn(
+            "w-full h-10 rounded shadow-md flex items-center justify-center font-bold text-xl transition-colors relative z-10",
+            isHigh ? "bg-neon-green text-black" : "bg-slate-700 text-slate-400"
+          )}
+          animate={{ y: isHigh ? 0 : 40 }}
+          transition={{ type: "spring", stiffness: 600, damping: 30 }}
+        >
+          {value}
+        </motion.div>
+      </button>
+    </div>
+  );
+}
+interface GateVisualizerProps {
+  type: GateType;
+  output: number;
+}
+function GateVisualizer({ type, output }: GateVisualizerProps) {
+  const isHigh = output === 1;
+  const getPaths = () => {
+    switch (type) {
+      case 'AND':
+        return <path d="M 20 10 L 45 10 A 25 25 0 0 1 45 60 L 20 60 Z" />;
