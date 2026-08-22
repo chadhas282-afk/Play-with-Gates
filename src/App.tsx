@@ -3038,3 +3038,43 @@ function ChallengeMode() {
                  onClick={nextLevel}
                  className="w-full py-3 bg-neon-green text-black font-bold rounded-lg shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:bg-green-400 transition-colors flex items-center justify-center gap-2"
                >
+                Next Challenge <Play className="w-4 h-4 fill-current" />
+               </button>
+             </motion.div>
+           ) : (
+             <button 
+               onClick={handleVerify}
+               className={cn(
+                 "w-full py-3 font-bold rounded-lg transition-colors flex items-center justify-center gap-2",
+                 hasTested && !isSuccess ? "bg-red-500/20 text-red-400 border border-red-500/50" : "bg-neon-blue text-black hover:bg-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.4)]"
+               )}
+             >
+               <CheckCircle2 className="w-5 h-5" /> {hasTested && !isSuccess ? "Incorrect. Try Again" : "Verify Circuit"}
+             </button>
+           )}
+        </div>
+      </div>
+      <div className="flex-1 relative">
+         <CircuitCanvas 
+           nodes={nodes}
+           setNodes={setNodes}
+           onNodesChange={onNodesChange}
+           edges={edges}
+           setEdges={setEdges}
+           onEdgesChange={onEdgesChange}
+           allowedGates={currentLevel.allowedGates}
+         />
+         <AnimatePresence>
+            {isSuccess && (
+              <motion.div 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 bg-neon-green/10 pointer-events-none z-50 flex items-center justify-center backdrop-blur-[2px]"
+              >
+                 <motion.div 
+                   initial={{ scale: 0.5, y: 50 }}
+                   animate={{ scale: 1, y: 0 }}
+                   className="bg-slate-900 border-2 border-neon-green p-8 rounded-2xl shadow-[0_0_50px_rgba(34,197,94,0.5)] flex flex-col items-center gap-4"
+                 >
+                   <Trophy className="w-16 h-16 text-neon-green drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]" />
