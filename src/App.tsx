@@ -2958,3 +2958,43 @@ function ChallengeMode() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [hasTested, setHasTested] = useState(false);
   useEffect(() => {
+    resetLevel(LEVELS[0]);
+  }, []);
+  const onToggleInput = (id: string) => {
+    setNodes(nds => nds.map(nd => nd.id === id ? { ...nd, data: { ...nd.data, value: nd.data.value === 0 ? 1 : 0 } } : nd));
+  };
+  const resetLevel = (lvl: Level) => {
+    setCurrentLevel(lvl);
+    setIsSuccess(false);
+    setHasTested(false);
+    setNodes([
+      { id: 'in1', type: 'inputNode', position: { x: 100, y: 150 }, data: { id: 'in1', value: 0, onToggle: onToggleInput }, draggable: false, deletable: false },
+      { id: 'in2', type: 'inputNode', position: { x: 100, y: 350 }, data: { id: 'in2', value: 0, onToggle: onToggleInput }, draggable: false, deletable: false },
+      { id: 'out1', type: 'outputNode', position: { x: 800, y: 250 }, data: { id: 'out1', value: 0 }, draggable: false, deletable: false },
+    ]);
+    setEdges([]);
+  };
+  const handleVerify = () => {
+     let passed = true;
+     for (const row of currentLevel.targetTruthTable) {
+        const result = simulateCircuit(nodes, edges, row.inputs);
+        if (result !== row.output) {
+           passed = false;
+           break;
+        }
+     }
+     setHasTested(true);
+     if (passed) {
+       setIsSuccess(true);
+     }
+  };
+  const nextLevel = () => {
+    if (currentLevel.id < LEVELS.length) {
+      resetLevel(LEVELS[currentLevel.id]); 
+    } else {
+      resetLevel(generateRandomLevel(currentLevel.id + 1));
+    }
+  };
+  return (
+    <div className="flex h-full w-full relative">
+      <div className="w-80 bg-slate-900 border-r border-slate-700 flex flex-col z-10 shadow-2xl relative"></div>
