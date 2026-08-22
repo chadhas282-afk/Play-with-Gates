@@ -3358,3 +3358,43 @@ export const LEVELS: Level[] = [
       {
         "inputs": [
           1,
+           1,
+          1
+        ],
+        "output": 1
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Majority Rules",
+    "description": "Output 1 if two or more inputs are 1.",
+    "allowedGates": [
+      "AND",
+      "OR"
+    ],
+    "targetTruthTable": [
+      {
+        "inputs": [
+          0,
+          0,
+          0
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          0,
+          0,
+          1
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          0,
+          1,
+          0
+        ],
+        "output": 0
+      },
