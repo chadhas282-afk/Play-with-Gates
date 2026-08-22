@@ -3958,3 +3958,43 @@ export const LEVELS: Level[] = [
         "inputs": [
           1,
           1,
+           0,
+          1
+        ],
+        "output": 1
+      },
+      {
+        "inputs": [
+          1,
+          1,
+          1,
+          0
+        ],
+        "output": 1
+      },
+      {
+        "inputs": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "output": 1
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "title": "4-Input XOR",
+    "description": "Output 1 if an odd number of inputs are 1.",
+    "allowedGates": [
+      "XOR"
+    ],
+    "targetTruthTable": [
+      {
+        "inputs": [
+          0,
+          0,
+          0,
+          0
+        ],
