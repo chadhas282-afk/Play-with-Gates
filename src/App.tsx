@@ -3118,3 +3118,43 @@ export const LEVELS: Level[] = [
         ],
         "output": 0
       },
+      {
+        "inputs": [
+          1,
+          0
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          1,
+          1
+        ],
+        "output": 1
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Any Signal Will Do",
+    "description": "Build a circuit that outputs 1 if AT LEAST ONE input is 1.",
+    "allowedGates": [
+      "OR",
+      "AND"
+    ],
+    "targetTruthTable": [
+      {
+        "inputs": [
+          0,
+          0
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          0,
+          1
+        ],
+        "output": 1
+      },
+      {
