@@ -3158,3 +3158,43 @@ export const LEVELS: Level[] = [
         "output": 1
       },
       {
+        "inputs": [
+          1,
+          0
+        ],
+        "output": 1
+      },
+      {
+        "inputs": [
+          1,
+          1
+        ],
+        "output": 1
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "The Exclusivity Rule",
+    "description": "Build an XOR logic gate using only AND, OR, and NOT gates.",
+    "allowedGates": [
+      "AND",
+      "OR",
+      "NOT"
+    ],
+    "targetTruthTable": [
+      {
+        "inputs": [
+          0,
+          0
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          0,
+          1
+        ],
+        "output": 1
+      },
+      {
