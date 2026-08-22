@@ -2678,3 +2678,43 @@ function GateVisualizer({ type, output }: GateVisualizerProps) {
     switch (type) {
       case 'AND':
         return <path d="M 20 10 L 45 10 A 25 25 0 0 1 45 60 L 20 60 Z" />;
+        case 'NAND':
+        return (
+          <>
+            <path d="M 15 10 L 40 10 A 25 25 0 0 1 40 60 L 15 60 Z" />
+            <circle cx="70" cy="35" r="5" />
+          </>
+        );
+      case 'OR':
+        return <path d="M 20 10 Q 45 10 65 35 Q 45 60 20 60 Q 30 35 20 10 Z" />;
+      case 'NOR':
+        return (
+          <>
+            <path d="M 15 10 Q 40 10 60 35 Q 40 60 15 60 Q 25 35 15 10 Z" />
+            <circle cx="65" cy="35" r="5" />
+          </>
+        );
+      case 'XOR':
+        return (
+          <>
+            <path d="M 10 10 Q 20 35 10 60" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+            <path d="M 20 10 Q 45 10 65 35 Q 45 60 20 60 Q 30 35 20 10 Z" />
+          </>
+        );
+      case 'XNOR':
+        return (
+          <>
+            <path d="M 5 10 Q 15 35 5 60" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+            <path d="M 15 10 Q 40 10 60 35 Q 40 60 15 60 Q 25 35 15 10 Z" />
+            <circle cx="65" cy="35" r="5" />
+          </>
+        );
+      case 'NOT':
+        return (
+          <>
+            <path d="M 25 15 L 55 35 L 25 55 Z" />
+            <circle cx="60" cy="35" r="5" />
+          </>
+        );
+      case 'MUX':
+        return (
