@@ -2718,3 +2718,43 @@ function GateVisualizer({ type, output }: GateVisualizerProps) {
         );
       case 'MUX':
         return (
+          <>
+            <path d="M 25 5 L 55 15 L 55 55 L 25 65 Z" fill={isHigh ? 'rgba(34,197,94,0.1)' : 'rgba(71,85,105,0.2)'} />
+            <text x="38" y="39" fontSize="12" fill="currentColor" textAnchor="middle" className="font-bold font-mono border-none outline-none select-none">MUX</text>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+  return (
+    <motion.div 
+      className="relative flex items-center justify-center p-8 bg-slate-800/50 rounded-2xl border border-slate-700/50 backdrop-blur-sm"
+      animate={{ scale: isHigh ? 1.05 : 1 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
+      <svg 
+        viewBox="0 0 100 70" 
+        className={cn(
+          "w-48 h-32 transition-all duration-300 drop-shadow-xl",
+          isHigh ? "text-neon-green drop-shadow-[0_0_15px_rgba(34,197,94,0.6)]" : "text-slate-500"
+        )}
+      >
+        <g fill="none" stroke="currentColor" strokeWidth="4" strokeLinejoin="round">
+          {getPaths()}
+        </g>
+      </svg>
+      <div className="absolute top-4 right-4 uppercase text-xs font-bold tracking-widest text-slate-500">
+        {type}
+      </div>
+    </motion.div>
+  );
+}
+interface AnimatedWireProps {
+  value: number;
+  orientation?: 'horizontal' | 'vertical' | 'curved';
+  path?: string;
+  width?: number;
+  height?: number;
+  className?: string;
+}
