@@ -3678,3 +3678,43 @@ export const LEVELS: Level[] = [
   {
     "id": 9,
     "title": "4-Input AND",
+    "description": "Output 1 only when all 4 inputs are 1.",
+    "allowedGates": [
+      "AND"
+    ],
+    "targetTruthTable": [
+      {
+        "inputs": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          0,
+          0,
+          1,
+          0
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "output": 0
