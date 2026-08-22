@@ -3438,3 +3438,43 @@ export const LEVELS: Level[] = [
         ],
         "output": 1
       }
+      ]
+  },
+  {
+    "id": 7,
+    "title": "Odd Parity",
+    "description": "Output 1 if there is an odd number of 1s in the inputs.",
+    "allowedGates": [
+      "XOR",
+      "NOT",
+      "AND",
+      "OR"
+    ],
+    "targetTruthTable": [
+      {
+        "inputs": [
+          0,
+          0,
+          0
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          0,
+          0,
+          1
+        ],
+        "output": 1
+      },
+      {
+        "inputs": [
+          0,
+          1,
+          0
+        ],
+        "output": 1
+      },
+      {
+        "inputs": [
+          0,
