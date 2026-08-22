@@ -3078,3 +3078,43 @@ function ChallengeMode() {
                    className="bg-slate-900 border-2 border-neon-green p-8 rounded-2xl shadow-[0_0_50px_rgba(34,197,94,0.5)] flex flex-col items-center gap-4"
                  >
                    <Trophy className="w-16 h-16 text-neon-green drop-shadow-[0_0_15px_rgba(34,197,94,0.8)]" />
+                   <h2 className="text-3xl font-bold text-slate-100">Excellent!</h2>
+                   <p className="text-slate-400 text-center max-w-xs">Your logic gates correctly resolved all possible input states.</p>
+                 </motion.div>
+              </motion.div>
+            )}
+         </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+export interface Level {
+  id: number;
+  title: string;
+  description: string;
+  targetTruthTable: { inputs: number[], output: number }[];
+  allowedGates: GateType[];
+}
+export const LEVELS: Level[] = [
+  {
+    "id": 1,
+    "title": "The Basics: AND Logic",
+    "description": "Connect the inputs to an AND gate to match the truth table.",
+    "allowedGates": [
+      "AND"
+    ],
+    "targetTruthTable": [
+      {
+        "inputs": [
+          0,
+          0
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          0,
+          1
+        ],
+        "output": 0
+      },
