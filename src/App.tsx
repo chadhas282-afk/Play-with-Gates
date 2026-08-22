@@ -2758,3 +2758,43 @@ interface AnimatedWireProps {
   height?: number;
   className?: string;
 }
+function AnimatedWire({ value, orientation = 'horizontal', path, width = 100, height = 20, className }: AnimatedWireProps) {
+  const isHigh = value === 1;
+  if (path) {
+    return (
+      <svg className={cn("overflow-visible", className)} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+        <path
+          d={path}
+          fill="none"
+          stroke={isHigh ? "#22c55e" : "#475569"}
+          strokeWidth="6"
+          className="transition-colors duration-300"
+          strokeLinecap="round"
+        />
+        {isHigh && (
+          <path
+            d={path}
+            fill="none"
+            stroke="#10b981"
+            strokeWidth="6"
+            strokeDasharray="10 15"
+            strokeLinecap="round"
+            className="animate-flow drop-shadow-[0_0_8px_rgba(34,197,94,0.8)]"
+          />
+        )}
+      </svg>
+    );
+  }
+  const isHorizontal = orientation === 'horizontal';
+  return (
+    <div className={cn("relative flex items-center justify-center", className)} style={{ width: isHorizontal ? width : 6, height: isHorizontal ? 6 : height }}>
+      <div className={cn("absolute bg-slate-600 rounded-full transition-colors duration-300", isHorizontal ? "h-1.5 w-full" : "w-1.5 h-full", isHigh && "bg-neon-green shadow-[0_0_10px_rgba(34,197,94,0.6)]")} />
+      {isHigh && (
+        <div 
+          className={cn(
+            "absolute rounded-full bg-white opacity-80", 
+            isHorizontal ? "h-1.5 w-full" : "w-1.5 h-full"
+          )}
+          style={{
+            backgroundImage: isHorizontal ? 'repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(255,255,255,0.8) 10px, rgba(255,255,255,0.8) 20px)' : 'repeating-linear-gradient(0deg, transparent, transparent 10px, rgba(255,255,255,0.8) 10px, rgba(255,255,255,0.8) 20px)',
+            backgroundSize: '200% 200%',
