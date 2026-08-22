@@ -2837,4 +2837,44 @@ function DynamicTruthTable({ type, currentInputs }: DynamicTruthTableProps) {
                 )}
               >
                 {inputsCount > 1 && (
-                  <td className={cn("p-3 border-b border-slate-700/50 border-r font-mono", isActive ? "text-white" : "text-slate-400")}></td>
+                  <td className={cn("p-3 border-b border-slate-700/50 border-r font-mono", isActive ? "text-white" : "text-slate-400")}>
+                    {row.inputs[0]}
+                  </td>
+                )}
+                <td className={cn("p-3 border-b border-slate-700/50 border-r font-mono", isActive ? "text-white" : "text-slate-400")}>
+                  {row.inputs[inputsCount > 1 ? 1 : 0]}
+                </td>
+                <td className={cn("p-3 border-b border-slate-700/50 font-bold font-mono", isActive ? "text-neon-green drop-shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "text-slate-500")}>
+                  {row.output}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+function SingleGateExplorer() {
+  const [activeType, setActiveType] = useState<GateType>('AND');
+  const [inputs, setInputs] = useState<number[]>([0, 0]);
+  const expectedInputs = getExpectedInputCount(activeType);
+  const currentInputs = inputs.slice(0, expectedInputs);
+  const output = evaluateGate(activeType, currentInputs);
+  const handleInputToggle = (index: number, val: number) => {
+    const newInputs = [...inputs];
+    newInputs[index] = val;
+    setInputs(newInputs);
+  };
+  const handleTypeChange = (t: GateType) => {
+    setActiveType(t);
+  };
+  return (
+    <div className="flex flex-col h-full overflow-y-auto w-full max-w-6xl mx-auto p-4 md:p-8">
+      <div className="flex flex-wrap justify-center gap-3 mb-16 mt-4">
+        {GATE_TYPES.map(type => (
+          <button
+            key={type}
+            onClick={() => handleTypeChange(type)}
+            className={cn(
+              "px-6 py-2 rounded-full font-bold text-sm transition-all duration-300 border",
