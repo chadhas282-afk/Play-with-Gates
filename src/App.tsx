@@ -2798,3 +2798,43 @@ function AnimatedWire({ value, orientation = 'horizontal', path, width = 100, he
           style={{
             backgroundImage: isHorizontal ? 'repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(255,255,255,0.8) 10px, rgba(255,255,255,0.8) 20px)' : 'repeating-linear-gradient(0deg, transparent, transparent 10px, rgba(255,255,255,0.8) 10px, rgba(255,255,255,0.8) 20px)',
             backgroundSize: '200% 200%',
+            animation: isHorizontal ? 'flow 1s linear infinite' : 'flow 1s linear infinite',
+          }}
+        />
+      )}
+    </div>
+  );
+}
+interface DynamicTruthTableProps {
+  type: GateType;
+  currentInputs: number[];
+}
+function DynamicTruthTable({ type, currentInputs }: DynamicTruthTableProps) {
+  const table = generateTruthTable(type);
+  const inputsCount = table[0].inputs.length;
+  return (
+    <div className="bg-panel-dark rounded-xl border border-slate-700 overflow-hidden shadow-lg w-full max-w-sm">
+      <div className="bg-slate-800 p-3 border-b border-slate-700 font-bold text-center text-slate-200">
+        Truth Table: {type}
+      </div>
+      <table className="w-full text-center border-collapse">
+        <thead>
+          <tr className="bg-slate-800/50 text-slate-400 text-sm">
+            {inputsCount > 1 && <th className="p-3 border-b border-slate-700 border-r w-1/3">Input A</th>}
+            <th className="p-3 border-b border-slate-700 border-r w-1/3">{inputsCount > 1 ? 'Input B' : 'Input A'}</th>
+            <th className="p-3 border-b border-slate-700 w-1/3 text-neon-blue">Output Y</th>
+          </tr>
+        </thead>
+        <tbody>
+          {table.map((row, i) => {
+            const isActive = currentInputs.every((val, idx) => val === row.inputs[idx]);
+            return (
+              <tr 
+                key={i} 
+                className={cn(
+                  "transition-colors duration-300",
+                  isActive ? "bg-neon-blue/20" : "hover:bg-slate-800/50"
+                )}
+              >
+                {inputsCount > 1 && (
+                  <td className={cn("p-3 border-b border-slate-700/50 border-r font-mono", isActive ? "text-white" : "text-slate-400")}></td>
