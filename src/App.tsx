@@ -2598,3 +2598,43 @@ function NavButton({ active, children, onClick, icon }: { active: boolean, child
       {icon}
       {children}
     </button>
+    );
+}
+export default App;
+const evaluateGate = (type: GateType, inputs: number[]): number => {
+  const a = inputs[0] ?? 0;
+  const b = inputs[1] ?? 0;
+  switch (type) {
+    case 'AND': return (a && b) ? 1 : 0;
+    case 'OR': return (a || b) ? 1 : 0;
+    case 'NOT': return a === 0 ? 1 : 0;
+    case 'NAND': return !(a && b) ? 1 : 0;
+    case 'NOR': return !(a || b) ? 1 : 0;
+    case 'XOR': return a !== b ? 1 : 0;
+    case 'XNOR': return a === b ? 1 : 0;
+    default: return 0;
+  }
+};
+const getExpectedInputCount = (type: GateType): number => {
+  if (type === 'NOT') return 1;
+  return 2;
+};
+const generateTruthTable = (type: GateType) => {
+  const inputsCount = getExpectedInputCount(type);
+  if (inputsCount === 1) {
+    return [
+      { inputs: [0], output: evaluateGate(type, [0]) },
+      { inputs: [1], output: evaluateGate(type, [1]) },
+    ];
+  }
+  return [
+    { inputs: [0, 0], output: evaluateGate(type, [0, 0]) },
+    { inputs: [0, 1], output: evaluateGate(type, [0, 1]) },
+    { inputs: [1, 0], output: evaluateGate(type, [1, 0]) },
+    { inputs: [1, 1], output: evaluateGate(type, [1, 1]) },
+  ];
+}
+interface ToggleSwitchProps {
+  value: number;
+  onChange: (val: number) => void;
+  label?: string;
