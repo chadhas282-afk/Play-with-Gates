@@ -2997,4 +2997,44 @@ function ChallengeMode() {
   };
   return (
     <div className="flex h-full w-full relative">
-      <div className="w-80 bg-slate-900 border-r border-slate-700 flex flex-col z-10 shadow-2xl relative"></div>
+      <div className="w-80 bg-slate-900 border-r border-slate-700 flex flex-col z-10 shadow-2xl relative">
+        <div className="p-6 border-b border-slate-700">
+          <div className="text-neon-blue font-bold tracking-widest text-xs uppercase mb-2">Level {currentLevel.id}</div>
+          <h2 className="text-2xl font-bold text-slate-100 mb-2">{currentLevel.title}</h2>
+          <p className="text-slate-400 text-sm leading-relaxed">{currentLevel.description}</p>
+        </div>
+        <div className="p-6 flex-1 overflow-y-auto">
+          <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">Target Output</h3>
+          <table className="w-full text-center border-collapse text-sm">
+            <thead>
+              <tr className="bg-slate-800 text-slate-400">
+                <th className="p-2 border border-slate-700">A</th>
+                <th className="p-2 border border-slate-700">B</th>
+                <th className="p-2 border border-slate-700 text-neon-blue">Y</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentLevel.targetTruthTable.map((row, i) => (
+                <tr key={i} className="hover:bg-slate-800/50">
+                  <td className="p-2 border border-slate-700 text-slate-300 font-mono">{row.inputs[0]}</td>
+                  <td className="p-2 border border-slate-700 text-slate-300 font-mono">{row.inputs[1]}</td>
+                  <td className="p-2 border border-slate-700 font-bold text-neon-green font-mono">{row.output}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="p-6 bg-slate-900 border-t border-slate-700 mt-auto">
+           {isSuccess ? (
+             <motion.div 
+               initial={{ scale: 0.9, opacity: 0 }} 
+               animate={{ scale: 1, opacity: 1 }}
+               className="flex flex-col gap-4"
+             >
+               <div className="flex items-center gap-2 text-neon-green font-bold justify-center">
+                 <Trophy className="w-5 h-5" /> Challenge Passed!
+               </div>
+               <button 
+                 onClick={nextLevel}
+                 className="w-full py-3 bg-neon-green text-black font-bold rounded-lg shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:bg-green-400 transition-colors flex items-center justify-center gap-2"
+               >
