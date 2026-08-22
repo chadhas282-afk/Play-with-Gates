@@ -3718,3 +3718,43 @@ export const LEVELS: Level[] = [
           1
         ],
         "output": 0
+        },
+      {
+        "inputs": [
+          0,
+          1,
+          0,
+          0
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          0,
+          1,
+          1,
+          0
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          0,
+          1,
+          1,
+          1
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          1,
