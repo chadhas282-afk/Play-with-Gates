@@ -3278,3 +3278,43 @@ export const LEVELS: Level[] = [
           0
         ],
         "output": 1
+        },
+      {
+        "inputs": [
+          1,
+          1,
+          1
+        ],
+        "output": 0
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "2-to-1 Multiplexer",
+    "description": "Use the first input (Select) to choose between the second (A) and third (B) inputs.",
+    "allowedGates": [
+      "AND",
+      "OR",
+      "NOT"
+    ],
+    "targetTruthTable": [
+      {
+        "inputs": [
+          0,
+          0,
+          0
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          0,
+          0,
+          1
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          0,
