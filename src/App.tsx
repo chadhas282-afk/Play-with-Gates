@@ -2918,3 +2918,43 @@ function SingleGateExplorer() {
                 exit={{ opacity: 0, scale: 0.8, filter: 'blur(4px)' }}
                 transition={{ duration: 0.3 }}
               >
+                <GateVisualizer type={activeType} output={output} />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+          <div className="mx-1">
+            <AnimatedWire value={output} width={70} />
+          </div>
+          <div className="ml-2">
+            <div className="flex flex-col items-center gap-4">
+              <span className="text-slate-400 font-mono text-sm uppercase tracking-wider">Output Y</span>
+              <div className="relative">
+                {output === 1 && <div className="absolute inset-0 bg-neon-green rounded-full blur-xl opacity-60 animate-pulse-glow" />}
+                <div 
+                  className={cn(
+                    "w-20 h-20 rounded-full transition-all duration-300 flex items-center justify-center font-bold text-3xl border-4 relative z-10",
+                    output === 1 
+                      ? "bg-black border-neon-green text-neon-green" 
+                      : "bg-slate-900 border-slate-700 text-slate-700"
+                  )}
+                >
+                  {output}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="w-full flex justify-center xl:justify-end xl:mr-8 max-w-md">
+          <DynamicTruthTable type={activeType} currentInputs={currentInputs} />
+        </div>
+      </div>
+    </div>
+  );
+}
+function ChallengeMode() {
+  const [currentLevel, setCurrentLevel] = useState<Level>(LEVELS[0]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [hasTested, setHasTested] = useState(false);
+  useEffect(() => {
