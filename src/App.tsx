@@ -3798,3 +3798,43 @@ export const LEVELS: Level[] = [
           0,
           0
         ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          1,
+          1,
+          0,
+          1
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          1,
+          1,
+          1,
+          0
+        ],
+        "output": 0
+      },
+      {
+        "inputs": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "output": 1
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "title": "4-Input OR",
+    "description": "Output 1 if any of the 4 inputs is 1.",
+    "allowedGates": [
+      "OR"
+    ],
+    "targetTruthTable": [
+      {
