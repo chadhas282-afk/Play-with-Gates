@@ -3198,3 +3198,43 @@ export const LEVELS: Level[] = [
         "output": 1
       },
       {
+        "inputs": [
+          1,
+          0
+        ],
+        "output": 1
+      },
+      {
+        "inputs": [
+          1,
+          1
+        ],
+        "output": 0
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "3-Input NAND",
+    "description": "Output 0 only when all 3 inputs are 1.",
+    "allowedGates": [
+      "NAND",
+      "AND",
+      "NOT"
+    ],
+    "targetTruthTable": [
+      {
+        "inputs": [
+          0,
+          0,
+          0
+        ],
+        "output": 1
+      },
+      {
+        "inputs": [
+          0,
+          0,
+          1
+        ],
+        "output": 1
